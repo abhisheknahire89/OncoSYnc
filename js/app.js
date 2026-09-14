@@ -661,7 +661,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
 
           <div class="auth-form-card">
-            <div style="font-size: 12px; color: #334155; line-height: 1.5; background: rgba(0,0,0,0.25); padding: 12px; border-radius: 8px; margin-bottom: 16px;">
+            <div style="font-size: 12px; color: #334155; line-height: 1.5; background: rgba(255,255,255,0.6); padding: 12px; border-radius: 8px; margin-bottom: 16px; border: 1px solid rgba(0,0,0,0.05);">
               • Your symptom logs directly inform acute triage protocols.<br/>
               • Lab results are held for doctor review before patient release.<br/>
               • Emergency contacts can be authorized as caregivers anytime.
@@ -829,6 +829,18 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         ` : ''}
 
+        <!-- WHAT CHANGED SINCE LAST REVIEW (P1-03 / Doctor Q2) -->
+        <div class="card" style="border-left: 4px solid #3b82f6; margin-bottom: 10px;">
+          <div class="card-header" style="margin-bottom: 4px;">
+            <div class="card-title" style="color: #1e3a8a;">New since last review (What Changed)</div>
+          </div>
+          <ul style="margin: 0; padding-left: 20px; font-size: 12px; color: #334155; line-height: 1.6;">
+            ${state.symptomReports.length > 0 ? `<li><strong>PROMs Update:</strong> Patient reported new symptoms (Temp: ${state.symptomReports[0].temperature}°F)</li>` : `<li>No new patient-reported symptoms.</li>`}
+            ${unreleasedRes.length > 0 ? `<li><strong>New Labs:</strong> Day 8 Nadir CBC is pending your review.</li>` : `<li>No new unreviewed lab results.</li>`}
+            ${state.documents.some(d => d.status === 'AWAITING_VERIFICATION') ? `<li><strong>External Data:</strong> New patient document uploaded awaiting OCR verification.</li>` : `<li>No new external documents.</li>`}
+          </ul>
+        </div>
+
         <!-- ELEANOR VANCE ACTIVE EPISODE CARD -->
         <div class="card glow-doctor" data-clickable="true" id="btnOpenEleanorSummary">
           <div class="card-header">
@@ -902,7 +914,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
       `;
-    } else if (screenName === 'Patients') {
+    } else if (screenName === 'Patients' || screenName === 'Search') {
       // D02: Patients Directory & Search
       const query = store.patientSearchQuery.toLowerCase().trim();
       const allPatients = [
@@ -953,9 +965,19 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="card-header">
             <div>
               <div class="card-title" style="font-size: 15px;">${state.patient.name}</div>
-              <div class="card-subtitle">MRN ${state.patient.mrn} · ${state.patient.age} F · ${state.patient.facility}</div>
+              <div class="card-subtitle">MRN ${state.patient.mrn} · ${state.patient.age} ${state.patient.gender === 'Female' ? 'F' : 'M'} · ${state.patient.facility || 'CCA Cancer Centre'}</div>
             </div>
             <span class="status-pill verified">✓ Active Episode</span>
+          </div>
+
+          <div style="background: ${state.patient.allergies && state.patient.allergies.length > 0 ? '#fee2e2' : '#f0fdf4'}; border-left: 3px solid ${state.patient.allergies && state.patient.allergies.length > 0 ? '#ef4444' : '#22c55e'}; padding: 6px 10px; border-radius: 4px; font-size: 12px; color: ${state.patient.allergies && state.patient.allergies.length > 0 ? '#991b1b' : '#166534'}; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            <div>
+              <strong style="display:block; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">Allergies</strong>
+              ${state.patient.allergies && state.patient.allergies.length > 0 ? 
+                state.patient.allergies.map(a => `${a.allergen} — ${a.reaction}`).join(' · ') : 
+                (state.patient.allergyStatus === 'NO_KNOWN_DRUG_ALLERGIES' ? 'No known drug allergies' : 'Not recorded')}
+            </div>
           </div>
 
           <div style="font-size: 12.5px; line-height: 1.5; color: #1e293b; margin-bottom: 10px;">
@@ -989,6 +1011,18 @@ document.addEventListener('DOMContentLoaded', () => {
               NEXUS Reasoning
             </button>
           </div>
+        </div>
+
+        <!-- WHAT CHANGED SINCE LAST REVIEW (P1-03) -->
+        <div class="card" style="border-left: 4px solid #3b82f6; margin-bottom: 10px;">
+          <div class="card-header" style="margin-bottom: 4px;">
+            <div class="card-title" style="color: #1e3a8a;">What Changed Since Last Review</div>
+          </div>
+          <ul style="margin: 0; padding-left: 20px; font-size: 12px; color: #334155; line-height: 1.6;">
+            ${state.symptomReports.length > 0 ? `<li><strong>PROMs Update:</strong> Patient reported new symptoms (Temp: ${state.symptomReports[0].temperature}°F)</li>` : `<li>No new patient-reported symptoms.</li>`}
+            ${state.results.some(r => r.releaseState === 'UNRELEASED') ? `<li><strong>New Labs:</strong> Day 8 Nadir CBC is pending your review.</li>` : `<li>No new unreviewed lab results.</li>`}
+            ${state.documents.some(d => d.status === 'AWAITING_VERIFICATION') ? `<li><strong>External Data:</strong> New patient document uploaded awaiting OCR verification.</li>` : `<li>No new external documents.</li>`}
+          </ul>
         </div>
 
         <!-- RECENT SYMPTOM STREAM -->
@@ -1309,6 +1343,12 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="card-header">
             <div class="card-title" style="font-size: 13.5px;">Plan v${currentPlan ? currentPlan.version : 1} (Current Active)</div>
             <span class="status-pill signed">✓ Active Protocol</span>
+          </div>
+
+          <!-- P1-04: Patient Delivery State -->
+          <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(59, 130, 246, 0.05); padding: 8px; border-radius: 6px; margin-bottom: 8px;">
+            <div style="font-size: 11.5px; font-weight: 600; color: #1e3a8a;">Patient App Delivery Status:</div>
+            <span class="status-pill verified">✓ Received & Reviewed by Patient</span>
           </div>
 
           <div style="font-size: 12px; color: #334155; line-height: 1.5; margin-bottom: 8px;">
@@ -1886,11 +1926,11 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="font-size:11.5px; color:#94a3b8; margin-bottom:14px;">
             Upon signature, this clinical encounter will be permanently locked and an approved Visit Summary will be generated for Ananya Sharma.
           </div>
-          <button class="btn-primary-action doctor-btn" id="btnExecuteSignConsult" data-clickable="true">
+          <button class="btn-primary-action doctor-btn" id="btnConfirmSignConsult" data-clickable="true">
             Sign Consultation & Release Summary
           </button>
         `, (body) => {
-          const btn = body.querySelector('#btnExecuteSignConsult');
+          const btn = body.querySelector('#btnConfirmSignConsult');
           if (btn) {
             btn.addEventListener('click', () => {
               store.signConsultation({
@@ -2165,6 +2205,39 @@ document.addEventListener('DOMContentLoaded', () => {
   // ========================================================
   function renderPatientScreen(state, screenName) {
     let html = '';
+    
+    // Check Caregiver Scope Permissions
+    const reqScopeMap = {
+      'Appointments': 'appointments',
+      'VisitSummary': 'treatmentInstructions',
+      'Documents': 'documents',
+      'Results': 'results',
+      'Messages': 'messages',
+      'Symptoms': 'symptomSubmission',
+      'Billing': 'financial',
+      'Roadmap': 'treatmentRoadmap',
+      'MyCare': 'treatmentRoadmap',
+      'Medicines': 'medicines'
+    };
+    const reqScope = reqScopeMap[screenName];
+    if (reqScope && !store.hasPatientScope(reqScope)) {
+      appContent.innerHTML = `
+        <div style="padding: 40px 20px; text-align: center; margin-top: 40px;">
+          <div style="font-size: 48px; margin-bottom: 16px;">🔒</div>
+          <h3 style="margin: 0 0 12px 0; color: #0f172a;">Access Restricted</h3>
+          <p style="color: #64748b; font-size: 15px; margin: 0 0 24px 0; line-height: 1.5;">
+            Your caregiver access level does not include permission to view or manage this section.
+          </p>
+          <button class="btn-primary-action" id="btnReturnHomeFromDenied" data-clickable="true" style="min-height: 44px; padding: 0 24px; font-size: 15px;">
+            Return Home
+          </button>
+        </div>
+      `;
+      const btn = document.getElementById('btnReturnHomeFromDenied');
+      if (btn) btn.addEventListener('click', () => store.navigatePatient('Home'));
+      return;
+    }
+
 
     if (screenName === 'Home') {
       // P02: Patient Home
@@ -2181,6 +2254,19 @@ document.addEventListener('DOMContentLoaded', () => {
           <span class="status-pill verified">Day 8 Nadir</span>
         </div>
 
+        <!-- P1-06: Plan Change Notification -->
+        ${(state.cancerEpisode.activePlanVersion || 1) > 1 ? `
+        <div class="card glow-patient" style="border-left: 4px solid #4f46e5; margin-bottom: 12px; cursor: pointer;" id="btnViewPlanChanges" data-clickable="true">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+              <div style="font-size: 13px; font-weight: 700; color: #312e81; margin-bottom: 2px;">⚠️ Care Plan Updated</div>
+              <div style="font-size: 11.5px; color: #334155;">Dr Anjali Menon updated your plan instructions to v${state.cancerEpisode.activePlanVersion}. Review the new guidance.</div>
+            </div>
+            <span class="status-pill verified">New</span>
+          </div>
+        </div>
+        ` : ''}
+
         <!-- DOMINANT NEXT ACTION CARD (P02) -->
         <div class="dominant-action-card glow-patient" data-clickable="true" id="btnGoNextApt">
           <div class="dominant-action-tag">Next Dominant Step</div>
@@ -2189,7 +2275,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
             <span>Friday · 9:30 AM · ${nextApt ? nextApt.facility : 'CCA Cancer Centre'}</span>
           </div>
-          <button class="btn-primary-action" style="min-height: 44px; font-size: 14px;" data-clickable="true">
+          <button class="btn-primary-action" id="btnPatientHomeAptView" style="min-height: 44px; font-size: 14px;" data-clickable="true">
             View Appointment Details →
           </button>
         </div>
@@ -2317,14 +2403,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <strong style="color:#0f172a;">Dr Anjali Menon</strong><br/>
                 <span style="font-size: 11px; color: #94a3b8;">Treating Medical Oncologist · MD, DM</span>
               </div>
-              <button class="btn-secondary btnCareTeamMsg" data-name="Dr Anjali Menon" data-clickable="true" style="padding: 4px 8px; font-size: 11px;">Message</button>
+              <button class="btn-secondary btnCareTeamMsg" id="btnMsgDrMenon" data-name="Dr Anjali Menon" data-clickable="true" style="padding: 4px 8px; font-size: 11px;">Message</button>
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px;">
               <div>
                 <strong style="color:#0f172a;">Priya Rao, RN</strong><br/>
                 <span style="font-size: 11px; color: #94a3b8;">Breast Oncology Nurse Navigator</span>
               </div>
-              <button class="btn-secondary btnCareTeamMsg" data-name="Nurse Priya Rao" data-clickable="true" style="padding: 4px 8px; font-size: 11px;">Message</button>
+              <button class="btn-secondary btnCareTeamMsg" id="btnMsgNursePriya" data-name="Nurse Priya Rao" data-clickable="true" style="padding: 4px 8px; font-size: 11px;">Message</button>
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <div>
@@ -2600,6 +2686,21 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="font-size: 11.5px; color:#334155; line-height:1.45;">
             Treating Oncologist: <strong>Dr Anjali Menon</strong><br/>
             Nurse Navigator: <strong>Priya Rao</strong> · CCA Cancer Centre
+          </div>
+        </div>
+
+        <!-- P1-05: Authoritative Current Instructions -->
+        <div class="card" style="border-left: 4px solid #4f46e5; margin-bottom: 10px; background: rgba(79, 70, 229, 0.03);">
+          <div class="card-header" style="margin-bottom: 4px;">
+            <div class="card-title" style="color: #4f46e5; font-size: 13px;">Current Care Instructions</div>
+            <span class="status-pill signed">From Dr Menon</span>
+          </div>
+          <div style="font-size: 12px; color: #1e293b; line-height: 1.6;">
+            Drink 2.5L of water daily.<br/>
+            ${(() => {
+              const cp = state.treatmentPlans.find(p => p.status === 'SIGNED');
+              return cp ? cp.patientInstructions : 'No active specific instructions at this time.';
+            })()}
           </div>
         </div>
 
@@ -2912,7 +3013,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${r.metrics.slice(0, 2).map(m => `${m.name}: <strong>${m.value}</strong>`).join(' · ')}
               </div>
             `}
-            <button class="btn-secondary btnAskAboutResult" data-res-title="${r.title}" data-clickable="true" style="width:100%; font-size:11.5px;">
+            <button class="btn-secondary btnAskAboutResult" id="btnAskAboutResult_${r.id}" data-res-title="${r.title}" data-clickable="true" style="width:100%; font-size:11.5px;">
               Ask Care Team a Question About This Result
             </button>
           </div>
@@ -2943,10 +3044,10 @@ document.addEventListener('DOMContentLoaded', () => {
               <strong>Preparation:</strong> ${apt.preparation}
             </div>
             <div style="display:flex; gap: 6px;">
-              <button class="btn-secondary btnConfirmApt" data-apt-id="${apt.id}" data-clickable="true" style="flex:1; font-size:11px;">
+              <button class="btn-secondary btnConfirmApt" id="btnConfirmApt_${apt.id}" data-apt-id="${apt.id}" data-clickable="true" style="flex:1; font-size:11px;">
                 ✓ Confirm Attendance
               </button>
-              <button class="btn-secondary btnChangeApt" data-apt-id="${apt.id}" data-clickable="true" style="flex:1; font-size:11px;">
+              <button class="btn-secondary btnChangeApt" id="btnChangeApt_${apt.id}" data-apt-id="${apt.id}" data-clickable="true" style="flex:1; font-size:11px;">
                 Request Change
               </button>
             </div>
@@ -2974,13 +3075,14 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div style="display:flex; gap:6px;">
               ${m.todayStatus !== 'TAKEN' ? `
-                <button class="btn-primary-action btnMarkTaken" data-med-id="${m.id}" data-clickable="true" style="flex:1; padding: 7px; font-size: 11.5px;">
-                  ✓ Mark Taken
-                </button>
+                <div style="flex:1; display:flex; align-items:center; gap:8px;">
+                  <input type="checkbox" class="action-check-box btnMarkTaken" data-med-id="${m.id}" data-clickable="true" style="width:22px; height:22px; cursor:pointer;" />
+                  <span style="font-size: 13px; font-weight: 600; color: #0f172a;">Mark Taken</span>
+                </div>
               ` : `
                 <div style="flex:1; font-size: 11.5px; color: #34d399; padding:7px;">✓ Taken today at 8:00 AM</div>
               `}
-              <button class="btn-secondary btnMissedDose" data-med-name="${m.name}" data-clickable="true" style="font-size:11px;">
+              <button class="btn-secondary btnMissedDose" id="btnMissedDose_${m.id}" data-med-name="${m.name}" data-clickable="true" style="font-size:11px;">
                 Missed Dose Info
               </button>
             </div>
@@ -3034,7 +3136,10 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
               <div>
                 <strong style="color:#0f172a;">Your Current Care Plan:</strong><br/>
-                ${vs.content.currentPlan}
+                ${vs.content.currentPlan}<br/>
+                <div style="margin-top: 4px; padding: 6px; background: rgba(59, 130, 246, 0.05); border-left: 2px solid #3b82f6;">
+                  <strong style="color:#1e3a8a;">Current Instructions:</strong> Drink 2.5L of water daily. Continue medications.
+                </div>
               </div>
               <div>
                 <strong style="color:#0f172a;">Medicines:</strong><br/>

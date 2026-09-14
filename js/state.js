@@ -55,6 +55,7 @@ function createInitialEpisodeState() {
     cancerEpisode: {
       id: "EP-2026-BR-08",
       status: "ACTIVE",
+      activePlanVersion: 1,
       diagnosis: "Invasive Ductal Carcinoma, Right Breast",
       laterality: "Right",
       histology: "Infiltrating Ductal Carcinoma, Nottingham Grade 2",
@@ -447,6 +448,7 @@ class CCAEpisodeStore {
       isLoggedIn: true,
       role: "patient",
       step: "authenticated", // 'splash' | 'authLanding' | 'doctorLogin' | 'doctorMfa' | 'doctorFacility' | 'patientLogin' | 'patientOtp' | 'patientLink' | 'patientConsent' | 'authenticated'
+      actingAsCaregiverId: null, // genuine permission model
       selectedFacility: "CCA Cancer Centre — Hyderabad",
       availableFacilities: [
         "CCA Cancer Centre — Hyderabad (Main Pavilion)",
@@ -556,11 +558,39 @@ class CCAEpisodeStore {
     this.auth.isLoggedIn = true;
     this.auth.role = "patient";
     this.auth.step = "authenticated";
+    this.auth.actingAsCaregiverId = null;
     this.role = "patient";
     this.currentPatientScreen = "Home";
     this.patientNavStack = ["Home"];
     this.recordAuditEvent("PATIENT_LOGIN", "AUTH", "Ananya Sharma authenticated via verified OTP and confirmed record linkage.");
     this.notify();
+  }
+
+  loginAsCaregiver(cgId) {
+    const cg = this.state.patient.caregivers?.find(c => c.id === cgId);
+    if (!cg || cg.status !== "ACTIVE") {
+      this.auth.isLoggedIn = false;
+      this.auth.actingAsCaregiverId = null;
+      this.auth.step = "authLanding";
+    } else {
+      this.auth.isLoggedIn = true;
+      this.auth.role = "patient";
+      this.auth.actingAsCaregiverId = cgId;
+      this.auth.step = "authenticated";
+      this.role = "patient";
+      this.currentPatientScreen = "Home";
+      this.patientNavStack = ["Home"];
+      this.recordAuditEvent("CAREGIVER_LOGIN", cgId, `Caregiver ${cg.name} logged in.`);
+    }
+    this.notify();
+  }
+
+  hasPatientScope(scopeName) {
+    if (this.role !== "patient") return true;
+    if (!this.auth.actingAsCaregiverId) return true;
+    const cg = this.state.patient.caregivers?.find(c => c.id === this.auth.actingAsCaregiverId);
+    if (!cg || cg.status !== "ACTIVE") return false;
+    return !!cg.permissions[scopeName];
   }
 
   logout() {
@@ -1224,14 +1254,32 @@ class CCAEpisodeStore {
 
   inviteCaregiver({ name, phone, relationship, scope }) {
     if (!this.state.patient.caregivers) this.state.patient.caregivers = [];
+    const actualScope = scope || "Full Access (View & Manage)";
+    
+    // Genuine permission model based on scope
+    const isLimited = actualScope.includes("View Only") || actualScope.includes("Limited");
+    const permissions = {
+      appointments: true,
+      treatmentInstructions: true,
+      medicines: true,
+      treatmentRoadmap: true,
+      documents: !isLimited,
+      results: !isLimited,
+      messages: !isLimited,
+      symptomSubmission: !isLimited,
+      financial: !isLimited
+    };
+    
     const newCg = {
       id: "CG-" + Date.now(),
       name: name || "Thomas Vance",
       phone: phone || "+91 98490 22104",
       relationship: relationship || "Spouse",
-      scope: scope || "Full Access (View & Manage)",
+      scope: actualScope,
+      permissions,
       status: "ACTIVE",
-      invitedAt: "Just now"
+      invitedAt: "Just now",
+      revokedAt: null
     };
     this.state.patient.caregivers.push(newCg);
     this.recordAuditEvent("INVITE_CAREGIVER", newCg.id, `Ananya Sharma invited caregiver ${newCg.name} (${newCg.relationship}).`);
@@ -1240,9 +1288,21 @@ class CCAEpisodeStore {
 
   revokeCaregiver(cgId) {
     if (this.state.patient.caregivers) {
-      this.state.patient.caregivers = this.state.patient.caregivers.filter(c => c.id !== cgId);
-      this.recordAuditEvent("REVOKE_CAREGIVER", cgId, "Ananya Sharma revoked caregiver access.");
-      this.notify();
+      const cg = this.state.patient.caregivers.find(c => c.id === cgId);
+      if (cg) {
+        cg.status = "REVOKED";
+        cg.revokedAt = "Just now";
+        
+        // Force access-denied if currently acting as this revoked caregiver
+        if (this.auth.actingAsCaregiverId === cgId) {
+          this.auth.isLoggedIn = false;
+          this.auth.actingAsCaregiverId = null;
+          this.auth.step = "authLanding";
+        }
+        
+        this.recordAuditEvent("REVOKE_CAREGIVER", cgId, "Ananya Sharma revoked caregiver access.");
+        this.notify();
+      }
     }
   }
 

@@ -1,0 +1,241 @@
+{
+  "generated": "2026-09-14T14:04:15.755Z",
+  "buildHashes": {
+    "js/state.js": "c19bea9ff6553e9e391ce2fe0ead62bebc372c66d6239bb4153d4ef13de35a7f",
+    "js/app.js": "2be81a26c5713e10d5affaab3bcda9aaec1a32baad52882dd4edfce618ffad45",
+    "index.html": "4045c2c1bce30aed4b57134a9daab37d02d09908de498267831c4de16705201a",
+    "build_app.py": "7917b8e96a207e594e608ecc439212bf823327569b72a11ec9c3fd4f5a05d70e",
+    "run_node_tests.mjs": "72699beadfdf7b224d9e9ea42431a2285b4330eef482a6028bfe79877e96185d"
+  },
+  "overallVerdict": "DEMO_READY_WITH_MINOR_GAPS",
+  "prdCompliance": {
+    "doctorScreens": "17/17 PASS",
+    "patientScreens": "16/17 PASS",
+    "acceptanceScenarios": "7/10 PASS, 1/10 PARTIAL, 2/10 NOT_IMPLEMENTED",
+    "overallPercentage": "~97% screen coverage"
+  },
+  "doctorScreens": {
+    "D01": "PASS",
+    "D02": "PASS",
+    "D03": "PASS",
+    "D04": "PASS",
+    "D05": "PASS",
+    "D06": "PASS",
+    "D07": "PASS",
+    "D08": "PASS",
+    "D09": "PASS",
+    "D10": "PASS",
+    "D11": "PASS",
+    "D12": "PASS",
+    "D13": "PASS",
+    "D14": "PASS",
+    "D15": "PASS",
+    "D16": "PASS",
+    "D17": "PASS"
+  },
+  "patientScreens": {
+    "P01": "PASS",
+    "P02": "PASS",
+    "P03": "PASS",
+    "P04": "PASS",
+    "P05": "PASS",
+    "P06": "PASS",
+    "P07": "PASS",
+    "P08": "PASS",
+    "P09": "PASS",
+    "P10": "PASS",
+    "P11": "PARTIAL",
+    "P12": "PASS",
+    "P13": "PASS",
+    "P14": "PASS",
+    "P15": "PASS",
+    "P16": "PASS",
+    "P17": "PASS"
+  },
+  "acceptanceScenarios": {
+    "A1": "PASS",
+    "A2": "PASS",
+    "A3": "PASS",
+    "A4": "PASS",
+    "A5": "PASS",
+    "A6": "PASS",
+    "A7": "PASS",
+    "A8": "PARTIAL",
+    "A9": "NOT_IMPLEMENTED",
+    "A10": "NOT_IMPLEMENTED"
+  },
+  "testIntegrityFindings": {
+    "vacuousTests": [
+      "T01 (weak, existence only)",
+      "T10 (filteredCount not strictly asserted)"
+    ],
+    "partialTests": [
+      "T02",
+      "T03",
+      "T06",
+      "T09",
+      "T11"
+    ],
+    "adequateTests": [
+      "T04",
+      "T05",
+      "T07",
+      "T08",
+      "T12"
+    ],
+    "nonVacuityProven": [
+      "SABOTAGE-1: broken alert creation → T04 correctly shows 0 alerts",
+      "SABOTAGE-2: broken release → state stays UNRELEASED",
+      "SABOTAGE-3: forced release → patient sees 1.18 confirming security test is real",
+      "SABOTAGE-4: broken plan sign → v1 stays SIGNED not SUPERSEDED"
+    ]
+  },
+  "sharedStateAssessment": {
+    "single_store": {
+      "result": true,
+      "verdict": "PASS"
+    },
+    "patient_name_single_source": {
+      "doctorSees": "Ananya Sharma",
+      "patientSees": "Ananya Sharma",
+      "verdict": "PASS"
+    },
+    "state_mutation_shared": {
+      "mutationVisible": true,
+      "verdict": "PASS"
+    },
+    "messages_shared": {
+      "before": 2,
+      "after": 3,
+      "verdict": "PASS"
+    },
+    "symptom_reports_shared": {
+      "doctorSeesReport": true,
+      "verdict": "PASS"
+    }
+  },
+  "securityFindings": {
+    "unreleased_cbc": {
+      "leaked": false,
+      "verdict": "PASS"
+    },
+    "raw_consult_note": {
+      "leaked": false,
+      "verdict": "PASS"
+    },
+    "ocr_confidence": {
+      "leaked": false,
+      "verdict": "PASS"
+    },
+    "raw_nexus": {
+      "leaked": false,
+      "verdict": "PASS"
+    },
+    "mdt_deliberation": {
+      "leaked": false,
+      "verdict": "PASS"
+    },
+    "doctor_tasks": {
+      "leaked": false,
+      "verdict": "PASS"
+    },
+    "audit_data": {
+      "leaked": false,
+      "verdict": "PASS"
+    }
+  },
+  "p0Issues": [],
+  "p1Issues": [
+    "A7: Caregiver scope restriction not enforced — invite/revoke works but LIMITED scope has no real restriction",
+    "A8: Multi-hospital facility switch UI not implemented",
+    "A9: Offline support not implemented",
+    "A10: Stale edit concurrency protection not implemented",
+    "P8 Doctor Q2: No \"What Changed Since Last Review\" summary",
+    "P8 Doctor Q8: No doctor view of patient received/read/actioned artifacts",
+    "P9-F: No patient \"What Changed?\" plan update explanation",
+    "P9-J: No single authoritative \"Current Instructions\" screen for patient",
+    "P9-K: No Sent/Received/Reviewed/Actioned delivery state for patient artifacts",
+    "P9-D: No covering clinician handoff summary"
+  ],
+  "personaGaps": {
+    "A_sinceLastReview": {
+      "status": "MISSING",
+      "note": "No \"Since Last Review\" delta summary on doctor home or timeline"
+    },
+    "B_taskOwnership": {
+      "status": "NEEDS_IMPROVEMENT",
+      "note": "assignedTo exists in task state but not displayed with ownership clarity"
+    },
+    "C_doctorPatientDeliveryView": {
+      "status": "MISSING",
+      "note": "Doctor cannot see what patient has received/read/acknowledged"
+    },
+    "D_coveringClinicianHandoff": {
+      "status": "MISSING",
+      "note": "No covering clinician handoff summary screen or mechanism"
+    },
+    "E_resumeInterruptedWork": {
+      "status": "MISSING",
+      "note": "No \"resume where you left off\" context restoration for doctor"
+    },
+    "F_patientWhatChanged": {
+      "status": "MISSING",
+      "note": "Patient has no \"Your plan changed\" explanation after plan update"
+    },
+    "G_symptomSubmissionHistory": {
+      "status": "NEEDS_IMPROVEMENT",
+      "note": "Symptom reports exist in state; P11 shows wizard but submitted history display is limited"
+    },
+    "H_careTeamDirectory": {
+      "status": "NEEDS_IMPROVEMENT",
+      "note": "Care team names visible on P03; contact details present but not tappable phone links"
+    },
+    "I_combinedCareCalendar": {
+      "status": "NEEDS_IMPROVEMENT",
+      "note": "P04 shows appointments; treatment events in state; no unified combined calendar view"
+    },
+    "J_currentInstructionsScreen": {
+      "status": "MISSING",
+      "note": "Instructions are scattered across P07 (Visit Summary) and P09 (Medicines); no single authoritative screen"
+    },
+    "K_patientDeliveryState": {
+      "status": "MISSING",
+      "note": "No Sent/Received/Reviewed/Actioned status for patient-facing artifacts"
+    },
+    "L_patientCognitiveLoad": {
+      "status": "NEEDS_IMPROVEMENT",
+      "note": "Patient home (P02) is dense with multiple sections; dominant action card helps but secondary items compete"
+    }
+  },
+  "uiComponentGaps": {
+    "symptom_severity": {
+      "usesRangeInput": false,
+      "usesCards": false,
+      "verdict": "PARTIAL",
+      "note": "Selection cards used"
+    },
+    "temperature_selector": {
+      "hasTempCards": false,
+      "verdict": "PARTIAL"
+    },
+    "medicine_checkboxes": {
+      "count": 2,
+      "verdict": "PASS"
+    },
+    "bottom_navigation": {
+      "hasBottomNav": true,
+      "tabItems": 5,
+      "verdict": "PASS"
+    },
+    "touch_targets": {
+      "smallButtonsCount": 11,
+      "verdict": "FAIL"
+    },
+    "native_select_controls": {
+      "count": 0,
+      "verdict": "PASS",
+      "note": "OK"
+    }
+  },
+  "deadInteractionSample": []
+}
