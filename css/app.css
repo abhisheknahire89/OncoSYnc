@@ -1,0 +1,1489 @@
+/* ========================================================
+   CCA Cancer Care — Mobile Component Design System (Doctor + Patient)
+   Apple iOS-Inspired Clinical Micro-UI Architecture
+   ======================================================== */
+
+:root {
+  /* 8-Point Spacing Rhythm */
+  --space-0: 0px;
+  --space-1: 4px;    /* micro / icon gaps */
+  --space-2: 8px;    /* tightly related elements */
+  --space-3: 12px;   /* compact internal card padding */
+  --space-4: 16px;   /* standard component spacing / doctor margin */
+  --space-5: 20px;   /* comfortable section spacing / patient margin */
+  --space-6: 24px;   /* major grouping */
+  --space-8: 32px;   /* section separation */
+  --space-10: 40px;  /* screen level separation */
+
+  /* Corner Radius Scale */
+  --radius-xs: 6px;
+  --radius-sm: 10px;  /* small controls, chips, badges */
+  --radius-md: 14px;  /* buttons, text inputs, segmented items */
+  --radius-lg: 18px;  /* cards, list groups, containers */
+  --radius-xl: 26px;  /* bottom sheets, floating dialogs */
+  --radius-pill: 999px; /* circular indicators & pills */
+
+  /* Control Heights & Touch Targets */
+  --touch-min: 44px;   /* Apple minimum interactive hit target */
+  --control-sm: 36px;
+  --control-md: 44px;  /* standard interactive control */
+  --control-lg: 48px;  /* standard input / doctor primary button */
+  --control-xl: 52px;  /* patient primary CTA */
+
+  /* Surface System — Radiant, Crisp, Clinical Bright Mode */
+  --cca-bg-dark: #f8fafc;
+  --cca-surface-card: #ffffff;
+  --cca-surface-elevated: #ffffff;
+  --cca-surface-hover: #f1f5f9;
+  --cca-surface-active: #e2e8f0;
+  --cca-surface-input: #ffffff;
+
+  /* Separators & Subtle Borders */
+  --cca-card-border: rgba(15, 23, 42, 0.09);
+  --cca-border-separator: rgba(15, 23, 42, 0.06);
+  --cca-border-subtle: rgba(15, 23, 42, 0.1);
+  --cca-border-focus: #0284c7;
+
+  /* Typography Colors */
+  --cca-text-primary: #0f172a;
+  --cca-text-secondary: #475569;
+  --cca-text-muted: #64748b;
+
+  /* Semantic Color Palette (Pair with label + icon) */
+  --cca-accent-patient: #0284c7;
+  --cca-accent-patient-light: #38bdf8;
+  --cca-accent-doctor: #4f46e5;
+  --cca-accent-doctor-light: #818cf8;
+
+  --cca-teal: #0ea5e9;
+  --cca-green: #10b981;
+  --cca-green-light: #34d399;
+  --cca-amber: #f59e0b;
+  --cca-amber-light: #fbbf24;
+  --cca-rose: #f43f5e;
+  --cca-rose-light: #fda4af;
+  --cca-destructive: #e11d48;
+}
+
+/* ========================================================
+   1. APP VIEWPORT & CANVAS (Inside iPhone Frame)
+   ======================================================== */
+.app-container {
+  width: 100%;
+  height: 100%;
+  background: var(--cca-bg-dark);
+  color: var(--cca-text-primary);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* App Header (Fixed Top) */
+.app-header {
+  padding-top: 52px;
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+  padding-bottom: var(--space-2);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--cca-card-border);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.app-brand-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #0ea5e9, #1d4ed8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 11.5px;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.35);
+}
+
+.app-title-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: -0.2px;
+}
+
+.role-tag-pill {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--radius-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.role-tag-pill.patient {
+  background: rgba(14, 165, 233, 0.12);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+.role-tag-pill.doctor {
+  background: rgba(99, 102, 241, 0.14);
+  color: #a5b4fc;
+  border: 1px solid rgba(165, 180, 252, 0.22);
+}
+
+.episode-tagline {
+  font-size: 11px;
+  color: var(--cca-text-secondary);
+}
+
+.header-action-btn {
+  width: 36px;
+  height: 36px;
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: 1px solid var(--cca-card-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cca-text-primary);
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.1s ease, background 0.15s ease;
+}
+
+.header-action-btn:active {
+  transform: scale(0.95);
+  background: #cbd5e1;
+}
+
+.notif-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--cca-rose);
+  color: #fff;
+  font-size: 8px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--cca-bg-dark);
+}
+
+/* Doctor Persistent Safety Header */
+.doctor-safety-header {
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 8px var(--space-4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11.5px;
+}
+
+.safety-patient-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.safety-patient-sub {
+  color: var(--cca-text-secondary);
+  font-size: 10.5px;
+  font-weight: 400;
+}
+
+.allergy-alert-pill {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--radius-xs);
+  background: rgba(239, 68, 68, 0.18);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Doctor Context Sub-Navigation */
+.doctor-subnav-bar {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 8px var(--space-4);
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
+.doctor-subnav-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.subnav-btn {
+  padding: 6px 12px;
+  min-height: 32px;
+  border-radius: var(--radius-pill);
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: var(--cca-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.subnav-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.subnav-btn:active {
+  transform: scale(0.96);
+}
+
+.subnav-btn.active {
+  background: var(--cca-accent-doctor);
+  color: #ffffff;
+  border-color: #6366f1;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35);
+}
+
+/* ========================================================
+   2. SCROLLABLE SCREEN CONTENT & SIDE MARGINS
+   ======================================================== */
+.screen-scroll-view {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--space-4) var(--space-4) 100px var(--space-4); /* Doctor default: 16px */
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Patient Views: More breathing room (20px) */
+.role-patient .screen-scroll-view,
+.patient-screen .screen-scroll-view {
+  padding: var(--space-4) var(--space-5) 100px var(--space-5);
+}
+
+.screen-scroll-view::-webkit-scrollbar {
+  width: 4px;
+}
+.screen-scroll-view::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+/* Navigation Back Button */
+.app-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  color: #38bdf8;
+  font-size: 14.5px;
+  font-weight: 550;
+  cursor: pointer;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  min-height: var(--touch-min);
+  min-width: var(--touch-min);
+  margin-left: -8px;
+  transition: background 0.15s ease;
+}
+
+.app-back-btn:hover, .app-back-btn:active {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* ========================================================
+   3. CARDS & GROUPED SURFACES (Apple-Style Hierarchy)
+   ======================================================== */
+.card {
+  background: var(--cca-surface-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--cca-card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-3);
+  position: relative;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.card:hover {
+  border-color: rgba(15, 23, 42, 0.16);
+}
+
+/* Replaced loud neon glow with calm surface elevation */
+.card.glow-patient {
+  background: #ffffff;
+  border-color: rgba(2, 132, 199, 0.25);
+  box-shadow: 0 4px 16px rgba(2, 132, 199, 0.08);
+}
+
+.card.glow-doctor {
+  background: #ffffff;
+  border-color: rgba(79, 70, 229, 0.25);
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.08);
+}
+
+/* Alert Card — Semantic, restrained, non-jarring */
+.card.alert-card {
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 650;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  letter-spacing: -0.2px;
+}
+
+.card-subtitle {
+  font-size: 12.5px;
+  color: var(--cca-text-secondary);
+}
+
+/* Dominant Next Action Card (Patient) */
+.dominant-action-card {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 1px solid #bae6fd;
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  transition: transform 0.12s ease, border-color 0.15s ease;
+}
+
+.dominant-action-card:active {
+  transform: scale(0.99);
+}
+
+.dominant-action-tag {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #38bdf8;
+  margin-bottom: var(--space-1);
+}
+
+.dominant-action-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0c4a6e;
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
+}
+
+.dominant-action-meta {
+  font-size: 13px;
+  color: #0369a1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+/* ========================================================
+   4. BUTTON SYSTEM (Primary, Secondary, Tertiary, Destructive)
+   ======================================================== */
+.btn-primary-action {
+  width: 100%;
+  min-height: var(--control-lg);
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, #0284c7, #0369a1);
+  color: #ffffff;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(2, 132, 199, 0.3);
+  transition: transform 0.1s ease, filter 0.15s ease;
+  letter-spacing: -0.1px;
+}
+
+.btn-primary-action:hover {
+  filter: brightness(1.08);
+}
+
+.btn-primary-action:active {
+  transform: scale(0.98);
+  filter: brightness(0.95);
+}
+
+.btn-primary-action.doctor-btn {
+  background: linear-gradient(135deg, #4f46e5, #4338ca);
+  box-shadow: 0 2px 10px rgba(79, 70, 229, 0.35);
+}
+
+.btn-secondary {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+  min-height: var(--touch-min);
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 550;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.btn-secondary:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.btn-secondary:active {
+  transform: scale(0.98);
+  background: #f1f5f9;
+}
+
+.btn-tertiary {
+  background: transparent;
+  border: none;
+  color: #38bdf8;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 12px;
+  min-height: var(--touch-min);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s ease;
+}
+
+.btn-tertiary:active {
+  background: rgba(56, 189, 248, 0.1);
+}
+
+.btn-destructive {
+  background: rgba(244, 63, 94, 0.12);
+  color: #fda4af;
+  border: 1px solid rgba(244, 63, 94, 0.25);
+  min-height: var(--touch-min);
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-destructive:active {
+  transform: scale(0.98);
+  background: rgba(244, 63, 94, 0.22);
+}
+
+/* ========================================================
+   5. TASK / MEDICATION CHECKLIST (Native iOS To-Do Style)
+   ======================================================== */
+.action-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 62px;
+  padding: var(--space-3) var(--space-4);
+  background: #ffffff;
+  border: 1px solid var(--cca-card-border);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-2);
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
+}
+
+.action-item:hover {
+  background: #f8fafc;
+  border-color: rgba(15, 23, 42, 0.16);
+}
+
+.action-item:active {
+  transform: scale(0.99);
+}
+
+.action-item.done {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+/* Circular Completion Circle */
+.action-check-box {
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.action-item.done .action-check-box {
+  background: var(--cca-green);
+  border-color: var(--cca-green);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35);
+}
+
+.action-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.action-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+  line-height: 1.3;
+  margin-bottom: 2px;
+}
+
+.action-desc {
+  font-size: 12.5px;
+  color: var(--cca-text-secondary);
+  line-height: 1.35;
+}
+
+.action-item.done .action-title {
+  color: #334155;
+}
+
+.action-item.done .action-desc {
+  color: var(--cca-text-muted);
+}
+
+/* ========================================================
+   6. SEGMENTED CONTROLS & SEVERITY SELECTORS
+   ======================================================== */
+.segmented-control,
+.wizard-severity-row {
+  display: flex;
+  gap: 4px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-md);
+  padding: 3px;
+  min-height: var(--control-md);
+  margin: var(--space-3) 0 var(--space-4) 0;
+}
+
+.wizard-severity-btn,
+.segmented-item {
+  flex: 1;
+  min-height: 38px;
+  border: none;
+  background: transparent;
+  border-radius: 10px;
+  color: var(--cca-text-secondary);
+  font-size: 14px;
+  font-weight: 550;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.wizard-severity-btn:hover,
+.segmented-item:hover {
+  color: #ffffff;
+}
+
+.wizard-severity-btn.selected,
+.segmented-item.active {
+  background: #ffffff;
+  color: #0f172a;
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.wizard-severity-btn.severe.selected {
+  background: rgba(244, 63, 94, 0.25);
+  color: #fda4af;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(244, 63, 94, 0.2);
+}
+
+/* Selection Cards (Symptom Categories) */
+.wizard-choice-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.wizard-choice-btn {
+  min-height: 64px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: #0f172a;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.wizard-choice-btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.wizard-choice-btn:active {
+  transform: scale(0.98);
+}
+
+.wizard-choice-btn.selected {
+  background: #e0f2fe;
+  border-color: #0284c7;
+  color: #0369a1;
+  box-shadow: 0 2px 12px rgba(2, 132, 199, 0.2);
+}
+
+/* ========================================================
+   7. TEMPERATURE CONTROL (Native Stepper + Status)
+   ======================================================== */
+.temp-control-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.temp-label {
+  font-size: 12.5px;
+  color: var(--cca-text-secondary);
+  font-weight: 600;
+  margin-bottom: var(--space-2);
+  text-align: center;
+}
+
+.temp-stepper-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-3);
+}
+
+.stepper-btn {
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+  font-size: 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.stepper-btn:active {
+  transform: scale(0.94);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.temp-value-display {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.temp-value-num {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.5px;
+}
+
+.temp-value-unit {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--cca-text-secondary);
+}
+
+.temp-quick-pills {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: var(--space-3);
+}
+
+.temp-btn {
+  padding: 6px 12px;
+  min-height: 36px;
+  border-radius: var(--radius-pill);
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.temp-btn.active {
+  background: rgba(2, 132, 199, 0.25);
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+
+.temp-btn.danger.active {
+  background: rgba(244, 63, 94, 0.25);
+  border-color: #f43f5e;
+  color: #fda4af;
+}
+
+.temp-semantic-status {
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.temp-semantic-status.danger {
+  background: rgba(244, 63, 94, 0.15);
+  color: #fda4af;
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.temp-semantic-status.normal {
+  background: rgba(16, 185, 129, 0.12);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+/* ========================================================
+   8. INPUT FIELDS & SEARCH BARS
+   ======================================================== */
+.patient-search-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-md);
+  padding: 0 var(--space-3);
+  min-height: var(--control-md);
+  margin-bottom: var(--space-3);
+  transition: border-color 0.15s ease;
+}
+
+.patient-search-bar:focus-within {
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+}
+
+.patient-search-input {
+  flex: 1;
+  height: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.patient-search-input::placeholder {
+  color: var(--cca-text-muted);
+}
+
+/* General Text Inputs & Textareas */
+.auth-input-field,
+.auth-text-input,
+.app-text-input {
+  width: 100%;
+  min-height: var(--control-lg);
+  background: var(--cca-surface-input);
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-md);
+  padding: 0 var(--space-3);
+  color: #0f172a;
+  font-size: 14.5px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.auth-input-field:focus,
+.auth-text-input:focus,
+.app-text-input:focus {
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.22);
+}
+
+textarea.app-textarea,
+.auth-form-card textarea {
+  width: 100%;
+  min-height: 96px;
+  background: var(--cca-surface-input);
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  color: #0f172a;
+  font-size: 13.5px;
+  line-height: 1.45;
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.15s ease;
+}
+
+textarea.app-textarea:focus {
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.22);
+}
+
+/* ========================================================
+   9. MESSAGING & CHAT COMPOSER (Native iOS Thread)
+   ======================================================== */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-bottom: var(--space-4);
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.chat-bubble {
+  max-width: 82%;
+  padding: 12px 15px;
+  font-size: 14px;
+  line-height: 1.42;
+  position: relative;
+}
+
+.chat-bubble.patient-message {
+  background: #f1f5f9;
+  color: #0f172a;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px 18px 18px 4px;
+  align-self: flex-start;
+}
+
+.chat-bubble.doctor-message {
+  background: #4f46e5;
+  color: #ffffff;
+  border-radius: 18px 18px 4px 18px;
+  align-self: flex-end;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+}
+
+.chat-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: 10.5px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 5px;
+}
+
+.chat-composer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-pill);
+  padding: 4px 6px 4px 14px;
+  min-height: var(--control-lg);
+  margin-top: var(--space-2);
+}
+
+.chat-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.chat-input::placeholder {
+  color: var(--cca-text-muted);
+}
+
+.chat-send-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #0284c7;
+  color: #ffffff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.chat-send-btn:active {
+  transform: scale(0.92);
+}
+
+/* ========================================================
+   10. STATUS BADGES & PILLS (Standardized Semantic Scale)
+   ======================================================== */
+.status-pill {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  min-height: 22px;
+  border-radius: var(--radius-xs);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  letter-spacing: 0.2px;
+}
+
+.status-pill.signed,
+.status-pill.released {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.status-pill.verified {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+
+.status-pill.draft,
+.status-pill.awaiting {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.status-pill.urgent {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+
+.status-pill.superseded {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+/* ========================================================
+   11. BOTTOM TAB BAR (Unified Native Navigation)
+   ======================================================== */
+.ios-tab-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-around;
+  padding-top: 6px;
+  padding-bottom: 18px;
+  z-index: 75;
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--cca-text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  gap: 3px;
+  cursor: pointer;
+  transition: color 0.12s ease, transform 0.1s ease;
+  flex: 1;
+  min-height: var(--touch-min);
+}
+
+.tab-item:hover {
+  color: #334155;
+}
+
+.tab-item:active {
+  transform: scale(0.95);
+}
+
+.tab-item.active {
+  color: #0ea5e9;
+}
+
+.tab-item.active.doctor-tab {
+  color: #818cf8;
+}
+
+.tab-icon-wrap {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab-badge {
+  position: absolute;
+  top: -3px;
+  right: -7px;
+  background: var(--cca-rose);
+  color: #fff;
+  font-size: 8.5px;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--cca-bg-dark);
+}
+
+/* ========================================================
+   12. BOTTOM SHEET MODAL (Apple Action Sheet Feel)
+   ======================================================== */
+.app-sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 82;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: flex-end;
+}
+
+.app-sheet-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.app-bottom-sheet {
+  width: 100%;
+  max-height: 85%;
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding: var(--space-4);
+  padding-bottom: 34px;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+}
+
+.app-sheet-backdrop.open .app-bottom-sheet {
+  transform: translateY(0);
+}
+
+.sheet-handle {
+  width: 36px;
+  height: 4px;
+  background: #cbd5e1;
+  border-radius: 2px;
+  align-self: center;
+  margin-bottom: var(--space-3);
+}
+
+.sheet-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.sheet-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.2px;
+}
+
+.sheet-close-btn {
+  background: #f1f5f9;
+  border: none;
+  width: 32px;
+  height: 32px;
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  border-radius: 50%;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.sheet-close-btn:active {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Toast */
+.screen-toast {
+  position: absolute;
+  top: 54px;
+  left: 14px;
+  right: 14px;
+  background: rgba(16, 185, 129, 0.95);
+  color: #ffffff;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  font-weight: 650;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  z-index: 85;
+  transform: translateY(-70px);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.screen-toast.show {
+  transform: translateY(0);
+}
+
+.screen-toast.alert {
+  background: rgba(244, 63, 94, 0.95);
+}
+
+/* ========================================================
+   13. PATIENT DIRECTORY & CAREGIVER CARDS
+   ======================================================== */
+.patient-card-item {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin-bottom: var(--space-2);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.patient-card-item:hover, .patient-card-item:active {
+  background: rgba(26, 38, 64, 0.85);
+  border-color: rgba(56, 189, 248, 0.3);
+  transform: translateY(-1px);
+}
+
+.caregiver-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: var(--space-2);
+}
+
+/* Upload Dropzone */
+.upload-dropzone {
+  border: 2px dashed rgba(56, 189, 248, 0.35);
+  background: rgba(14, 165, 233, 0.04);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: var(--space-3);
+  transition: all 0.15s ease;
+}
+
+.upload-dropzone:hover {
+  background: rgba(14, 165, 233, 0.08);
+  border-color: #38bdf8;
+}
+
+/* Roadmap Vertical Timeline */
+.roadmap-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  position: relative;
+  padding-left: 22px;
+  margin: var(--space-3) 0;
+}
+
+.roadmap-timeline::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 7px;
+  width: 2px;
+  background: #cbd5e1;
+}
+
+.roadmap-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.roadmap-node {
+  position: absolute;
+  left: -22px;
+  top: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: 2px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.roadmap-step.completed .roadmap-node {
+  background: var(--cca-green);
+  border-color: var(--cca-green);
+}
+
+.roadmap-step.active .roadmap-node {
+  background: var(--cca-teal);
+  border-color: #38bdf8;
+  box-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+}
+
+.roadmap-step-title {
+  font-size: 13.5px;
+  font-weight: 650;
+  color: #0f172a;
+}
+
+.roadmap-step-desc {
+  font-size: 11.5px;
+  color: var(--cca-text-secondary);
+}
+
+/* Voice Scribe UI */
+.scribe-container {
+  background: #ffffff;
+  border: 1px solid #e0e7ff;
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-bottom: var(--space-3);
+}
+
+.scribe-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+}
+
+.scribe-recording-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--cca-rose);
+}
+
+.scribe-rec-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--cca-rose);
+}
+
+.waveform-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 24px;
+  margin-bottom: var(--space-3);
+}
+
+.wave-bar {
+  flex: 1;
+  background: #6366f1;
+  border-radius: 2px;
+  animation: waveMotion 1s infinite ease-in-out alternate;
+}
+
+@keyframes waveMotion {
+  from { height: 4px; opacity: 0.4; }
+  to { height: 20px; opacity: 1; }
+}
+
+.scribe-transcript-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  font-size: 12px;
+  line-height: 1.5;
+  color: #1e293b;
+  margin-bottom: var(--space-3);
+}
+
+.scribe-ai-draft-card {
+  background: rgba(99, 102, 241, 0.08);
+  border-left: 3px solid #6366f1;
+  border-radius: 4px var(--radius-sm) var(--radius-sm) 4px;
+  padding: var(--space-3);
+  font-size: 12px;
+  line-height: 1.45;
+  margin-bottom: var(--space-3);
+}
+
+/* OCR & NEXUS UI */
+.ocr-preview-card {
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.ocr-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  font-size: 11.5px;
+  margin-bottom: var(--space-2);
+}
+
+.ocr-candidate-row {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.nexus-cds-banner {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(241, 245, 249, 0.95) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.nexus-missing-info-box {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  margin: var(--space-2) 0;
+  font-size: 12px;
+  color: #b45309;
+  line-height: 1.4;
+}
+
+.clinical-preview-box {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-3);
+}
+
+.preview-tag-visible {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.14);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.preview-tag-hidden {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.14);
+  padding: 2px 7px;
+  border-radius: 4px;
+}

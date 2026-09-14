@@ -1,0 +1,630 @@
+/* CCA Cancer Care — Figma Presentation Studio & Canvas */
+:root {
+  --figma-bg: #e2e8f0;
+  --figma-bar-bg: #ffffff;
+  --figma-border: #cbd5e1;
+  --figma-text-primary: #0f172a;
+  --figma-text-secondary: #475569;
+  --figma-blue: #0284c7;
+  --figma-blue-glow: rgba(2, 132, 199, 0.25);
+  --figma-hover: #f1f5f9;
+  --figma-active: #e2e8f0;
+  --cca-navy: #0f172a;
+  --cca-teal: #0284c7;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  background-color: var(--figma-bg);
+  color: var(--figma-text-primary);
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Master Presentation Header */
+.figma-toolbar {
+  height: 58px;
+  background: var(--figma-bar-bg);
+  border-bottom: 1px solid var(--figma-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  z-index: 100;
+  flex-shrink: 0;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+
+.figma-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cca-brand-mark {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.cca-logo-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #0ea5e9, #1e40af);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: -0.5px;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.35);
+}
+
+.cca-title-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.cca-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cca-main-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.2px;
+}
+
+.cca-sub-title {
+  font-size: 10.5px;
+  color: var(--figma-text-secondary);
+  font-weight: 500;
+}
+
+.cca-prototype-badge {
+  font-size: 9.5px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(245, 158, 11, 0.14);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* Center Role Switcher */
+.figma-center {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.role-switch-container {
+  display: flex;
+  align-items: center;
+  background: #f1f5f9;
+  border: 1px solid var(--figma-border);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 3px;
+}
+
+.role-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  color: var(--figma-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.role-btn:hover {
+  color: #ffffff;
+  background: #f1f5f9;
+}
+
+.role-btn.active.doctor-active {
+  background: linear-gradient(135deg, #4f46e5, #4338ca);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.4);
+}
+
+.role-btn.active.patient-active {
+  background: linear-gradient(135deg, #0284c7, #0369a1);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.4);
+}
+
+.role-btn kbd {
+  font-size: 9px;
+  padding: 1px 4px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  opacity: 0.8;
+}
+
+/* Right Toolbar Controls */
+.figma-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.figma-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1px solid var(--figma-border);
+  color: #1e293b;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 6px 11px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.figma-btn:hover {
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: #424955;
+}
+
+.figma-btn.active {
+  background: rgba(14, 165, 233, 0.2);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.figma-btn.danger-btn {
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+.figma-btn.danger-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fff;
+}
+
+.figma-btn.guided-btn {
+  background: linear-gradient(135deg, #0284c7, #2563eb);
+  color: #fff;
+  border: none;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+}
+
+.figma-zoom-select {
+  background: #ffffff;
+  border: 1px solid var(--figma-border);
+  color: #1e293b;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 5px 9px;
+  border-radius: 8px;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Presentation Canvas / Stage */
+.prototype-stage {
+  flex: 1;
+  position: relative;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 45% 40%, #f1f5f9 0%, #e2e8f0 100%);
+  background-size: cover;
+  padding: 20px;
+}
+
+/* Subtle background grid */
+.prototype-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+/* Soft Spotlight Behind Phone */
+.stage-spotlight {
+  position: absolute;
+  width: 580px;
+  height: 940px;
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.12) 0%, rgba(99, 102, 241, 0.05) 50%, transparent 75%);
+  border-radius: 50%;
+  filter: blur(50px);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+/* Frame Scale Wrapper */
+.device-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: center center;
+  z-index: 10;
+}
+
+/* Hotspot Hint Overlay (Figma Blue Glow) */
+.hotspot-hint-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 46px;
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+
+.hotspot-hint-overlay.flash {
+  animation: figmaHotspotFlash 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes figmaHotspotFlash {
+  0% {
+    box-shadow: inset 0 0 0 4px #0ea5e9, 0 0 26px rgba(14, 165, 233, 0.85);
+    opacity: 1;
+  }
+  100% {
+    box-shadow: inset 0 0 0 0px transparent;
+    opacity: 0;
+  }
+}
+
+.hotspots-visible [data-clickable="true"] {
+  outline: 2px solid rgba(14, 165, 233, 0.75) !important;
+  outline-offset: -1px !important;
+  background-color: rgba(14, 165, 233, 0.12) !important;
+  position: relative;
+}
+
+.hotspots-visible [data-clickable="true"]::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 5px;
+  height: 5px;
+  background: #0ea5e9;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Right-Side Presenter Panel */
+.presenter-panel {
+  position: absolute;
+  right: 18px;
+  top: 72px;
+  bottom: 18px;
+  width: 360px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid #cbd5e1;
+  border-radius: 18px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
+  display: flex;
+  flex-direction: column;
+  z-index: 90;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+}
+
+.presenter-panel.collapsed {
+  transform: translateX(380px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.panel-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8fafc;
+}
+
+.panel-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panel-body::-webkit-scrollbar {
+  width: 5px;
+}
+.panel-body::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.panel-section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 800;
+  color: #94a3b8;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Section 1: Clinical Episode Card */
+.episode-meta-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.episode-patient-name {
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 13.5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.episode-meta-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  color: #94a3b8;
+}
+
+.episode-meta-val {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* Section 2: Scenarios List */
+.scenario-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.scenario-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.scenario-card:hover {
+  background: #f1f5f9;
+  border-color: rgba(14, 165, 233, 0.4);
+  transform: translateX(-2px);
+}
+
+.scenario-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.scenario-num {
+  font-size: 10px;
+  font-weight: 800;
+  color: #38bdf8;
+  padding: 1px 5px;
+  background: rgba(56, 189, 248, 0.12);
+  border-radius: 4px;
+}
+
+.scenario-desc {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 3px;
+  line-height: 1.35;
+}
+
+/* Section 3: Quick Screens Grid */
+.quick-screens-group {
+  margin-bottom: 8px;
+}
+
+.quick-screens-role-title {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #38bdf8;
+  margin-bottom: 5px;
+}
+
+.quick-screens-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.screen-chip {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.screen-chip:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+  border-color: #94a3b8;
+}
+
+.screen-chip.active {
+  background: rgba(14, 165, 233, 0.25);
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+
+/* Presenter Drawer Toggle Button */
+.panel-toggle-btn {
+  position: absolute;
+  right: 18px;
+  top: 72px;
+  z-index: 95;
+  background: rgba(30, 33, 38, 0.94);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  transition: all 0.15s ease;
+}
+
+.panel-toggle-btn:hover {
+  background: #2a2e36;
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.panel-toggle-btn.panel-open {
+  display: none;
+}
+
+/* Reset Confirmation Modal */
+.figma-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.figma-modal-backdrop.open {
+  display: flex;
+}
+
+.figma-modal-card {
+  width: 360px;
+  background: #1e2126;
+  border: 1px solid var(--figma-border);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  color: #fff;
+}
+
+.figma-modal-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.figma-modal-desc {
+  font-size: 12.5px;
+  color: #94a3b8;
+  line-height: 1.45;
+  margin-bottom: 18px;
+}
+
+.figma-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Guided Demo Story Drawer / Overlay */
+.guided-demo-banner {
+  position: absolute;
+  top: 72px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(14, 165, 233, 0.4);
+  border-radius: 30px;
+  padding: 6px 18px;
+  display: none;
+  align-items: center;
+  gap: 12px;
+  z-index: 85;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  font-size: 12px;
+  color: #0f172a;
+}
+
+.guided-demo-banner.active {
+  display: flex;
+}
+
+.guided-step-badge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 12px;
+  background: #0284c7;
+  color: #fff;
+}

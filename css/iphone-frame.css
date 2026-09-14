@@ -1,0 +1,345 @@
+/* Realistic Apple iPhone 16 Pro Mockup Frame */
+:root {
+  --phone-screen-width: 393px;
+  --phone-screen-height: 852px;
+  --phone-bezel: 14px;
+  --phone-corner-radius: 54px;
+  --phone-screen-radius: 44px;
+  
+  /* Natural Titanium Palette */
+  --titanium-outer: #8e8d89;
+  --titanium-mid: #686763;
+  --titanium-inner: #3a3937;
+  --phone-glass-reflection: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.02) 40%, transparent 60%);
+}
+
+/* Device Chassis */
+.iphone-16-pro {
+  position: relative;
+  width: calc(var(--phone-screen-width) + (var(--phone-bezel) * 2));
+  height: calc(var(--phone-screen-height) + (var(--phone-bezel) * 2));
+  border-radius: var(--phone-corner-radius);
+  background: linear-gradient(145deg, #e2e8f0 0%, #cbd5e1 25%, #f1f5f9 50%, #94a3b8 75%, #cbd5e1 100%);
+  padding: var(--phone-bezel);
+  box-shadow: 
+    0 0 0 1px rgba(255, 255, 255, 0.9) inset,
+    0 0 0 2px rgba(148, 163, 184, 0.4),
+    0 25px 60px -15px rgba(15, 23, 42, 0.18),
+    0 40px 90px -20px rgba(15, 23, 42, 0.14);
+  box-sizing: border-box;
+}
+
+/* Metallic Inner Rim */
+.iphone-inner-rim {
+  position: absolute;
+  inset: 5px;
+  border-radius: 49px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+}
+
+/* Hardware Buttons */
+.iphone-button {
+  position: absolute;
+  background: linear-gradient(to right, #4a4946, #6b6a65);
+  border-radius: 3px;
+  box-shadow: -1px 0 2px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+/* Left: Action Button */
+.iphone-button.action-btn {
+  left: -4px;
+  top: 115px;
+  width: 4px;
+  height: 28px;
+}
+
+/* Left: Volume Up */
+.iphone-button.vol-up {
+  left: -4px;
+  top: 160px;
+  width: 4px;
+  height: 52px;
+}
+
+/* Left: Volume Down */
+.iphone-button.vol-down {
+  left: -4px;
+  top: 224px;
+  width: 4px;
+  height: 52px;
+}
+
+/* Right: Power / Side Button */
+.iphone-button.power-btn {
+  right: -4px;
+  top: 175px;
+  width: 4px;
+  height: 76px;
+  box-shadow: 1px 0 2px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(to left, #4a4946, #6b6a65);
+}
+
+/* Speaker Earpiece Grille */
+.iphone-earpiece {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 54px;
+  height: 4px;
+  background: #111;
+  border-radius: 3px;
+  z-index: 20;
+}
+
+/* Active Screen Container */
+.iphone-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--phone-screen-radius);
+  background-color: #000000;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.9) inset;
+}
+
+/* iOS 18 Status Bar */
+.ios-status-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  padding: 12px 28px 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 80;
+  pointer-events: none;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  color: #0f172a;
+  transition: color 0.2s ease;
+}
+
+.ios-status-bar.dark-text {
+  color: #111827;
+}
+
+.status-time {
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+.status-icons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-icons svg {
+  fill: currentColor;
+}
+
+.battery-badge {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  position: relative;
+}
+
+.battery-pill {
+  width: 23px;
+  height: 11.5px;
+  border: 1.5px solid currentColor;
+  border-radius: 4px;
+  padding: 1.5px;
+  display: flex;
+  align-items: center;
+}
+
+.battery-level {
+  width: 82%;
+  height: 100%;
+  background: currentColor;
+  border-radius: 1.5px;
+  transition: width 0.3s ease;
+}
+
+.battery-tip {
+  width: 1.5px;
+  height: 4px;
+  background: currentColor;
+  border-radius: 0 1px 1px 0;
+}
+
+/* Dynamic Island */
+.dynamic-island-container {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 85;
+  transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+}
+
+.dynamic-island {
+  min-width: 124px;
+  height: 35px;
+  background: #000000;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+}
+
+/* Camera & Sensor reflections */
+.island-camera-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #182238 0%, #080c14 70%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.island-sensor-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #07090e;
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* Dynamic Island Expanded State (Live Activity / Clinical Triage Alert) */
+.dynamic-island.expanded {
+  min-width: 350px;
+  height: 84px;
+  border-radius: 34px;
+  padding: 12px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.75);
+}
+
+.island-compact-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  width: 100%;
+  justify-content: space-between;
+  padding-right: 28px;
+  padding-left: 6px;
+}
+
+.island-expanded-content {
+  display: none;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  animation: fadeInIsland 0.2s ease-in forwards;
+}
+
+.dynamic-island.expanded .island-compact-content {
+  display: none;
+}
+
+.dynamic-island.expanded .island-expanded-content {
+  display: flex;
+}
+
+.dynamic-island.expanded .island-camera-dot {
+  right: 18px;
+  top: 24px;
+}
+
+@keyframes fadeInIsland {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.island-activity-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.island-activity-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.island-activity-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.island-action-pill {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  background: #0284c7;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+/* Home Indicator Bar */
+.ios-home-indicator {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 138px;
+  height: 5px;
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 10px;
+  z-index: 80;
+  pointer-events: none;
+  transition: background-color 0.2s ease, width 0.15s ease;
+}
+
+.ios-home-indicator.dark {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Sublte Screen Edge Glare */
+.screen-edge-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--phone-screen-radius);
+  background: var(--phone-glass-reflection);
+  pointer-events: none;
+  z-index: 70;
+}

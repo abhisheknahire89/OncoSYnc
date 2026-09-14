@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CCA Cancer Care • Single App — Doctor + Patient</title>
+  <meta name="description" content="One cancer episode. One authoritative state. Two role-appropriate experiences. Interactive mobile demonstration prototype for CCA hospital stakeholders." />
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/figma-canvas.css" />
+  <link rel="stylesheet" href="css/iphone-frame.css" />
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+
+  <!-- Top Figma-Style Prototype Presentation Bar -->
+  <header class="figma-toolbar">
+    <div class="figma-left">
+      <div class="cca-brand-mark">
+        <div class="cca-logo-icon">CCA</div>
+        <div class="cca-title-block">
+          <div class="cca-title-row">
+            <span class="cca-main-title">CCA Cancer Care · Single App</span>
+            <span class="cca-prototype-badge">Interactive Demo Prototype</span>
+          </div>
+          <span class="cca-sub-title">Doctor and Patient working from the same Cancer Episode</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center: Interactive Role Switcher -->
+    <div class="figma-center">
+      <div class="role-switch-container">
+        <button class="role-btn active patient-active" id="roleBtnPatient" title="Switch to Cancer Patient View (P key)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          Patient Mode <kbd>P</kbd>
+        </button>
+        <button class="role-btn" id="roleBtnDoctor" title="Switch to Medical Oncologist View (D key)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/><circle cx="12" cy="12" r="2"/></svg>
+          Doctor Mode <kbd>D</kbd>
+        </button>
+      </div>
+    </div>
+
+    <!-- Right: Viewport Controls & Demo Actions -->
+    <div class="figma-right">
+      <button class="figma-btn guided-btn" id="guidedDemoBtn" title="Launch Step-by-Step Guided Demo">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Guided Demo
+      </button>
+
+      <button class="figma-btn" id="hotspotsBtn" title="Highlight clickable hotspots (H key)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+        Hotspots <kbd>H</kbd>
+      </button>
+
+      <select class="figma-zoom-select" id="zoomSelect" title="Viewport Zoom (F key to fit)">
+        <option value="fit" selected>Fit</option>
+        <option value="100">100%</option>
+        <option value="85">85%</option>
+        <option value="75">75%</option>
+      </select>
+
+      <button class="figma-btn danger-btn" id="restartBtn" title="Restore Deterministic Demo Baseline (R key)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        Reset Demo <kbd>R</kbd>
+      </button>
+    </div>
+  </header>
+
+  <!-- Guided Demo Step Overlay Banner -->
+  <div class="guided-demo-banner" id="guidedDemoBanner">
+    <span class="guided-step-badge">Demo Guide</span>
+    <span id="guidedStepText">1. Start as Patient: Open Symptoms to report Day 8 nadir symptoms.</span>
+    <button class="btn-primary-action" id="guidedNextBtn" style="padding: 4px 10px; font-size: 11px; width: auto;" data-clickable="true">
+      Execute Step →
+    </button>
+    <button class="panel-close-btn" id="guidedCloseBtn" title="Close Guide" style="color:#cbd5e1;">&times;</button>
+  </div>
+
+  <!-- Presentation Stage Canvas -->
+  <main class="prototype-stage" id="prototypeStage">
+    
+    <!-- Soft Spotlight Effect Behind iPhone -->
+    <div class="stage-spotlight"></div>
+
+    <!-- Scale & Position Wrapper -->
+    <div class="device-wrapper" id="deviceWrapper">
+      
+      <!-- Apple iPhone 16 Pro Enclosure -->
+      <div class="iphone-16-pro">
+        
+        <!-- Metallic Inner Rim -->
+        <div class="iphone-inner-rim"></div>
+
+        <!-- Physical Hardware Buttons -->
+        <div class="iphone-button action-btn" title="Action Button"></div>
+        <div class="iphone-button vol-up" title="Volume Up"></div>
+        <div class="iphone-button vol-down" title="Volume Down"></div>
+        <div class="iphone-button power-btn" title="Power Button"></div>
+
+        <!-- Speaker Earpiece -->
+        <div class="iphone-earpiece"></div>
+
+        <!-- Active Glass Screen -->
+        <div class="iphone-screen">
+          
+          <!-- Figma Blue Hotspot Miss Overlay -->
+          <div class="hotspot-hint-overlay" id="hotspotOverlay"></div>
+
+          <!-- iOS 18 Native Status Bar -->
+          <div class="ios-status-bar">
+            <span class="status-time" id="statusTime">9:41</span>
+            <div class="status-icons">
+              <svg width="17" height="11" viewBox="0 0 17 11">
+                <rect x="0.5" y="8" width="3" height="3" rx="0.5"/>
+                <rect x="4.5" y="5.5" width="3" height="5.5" rx="0.5"/>
+                <rect x="8.5" y="3" width="3" height="8" rx="0.5"/>
+                <rect x="12.5" y="0.5" width="3" height="10.5" rx="0.5"/>
+              </svg>
+              <span style="font-size: 11px; font-weight: 700; letter-spacing: -0.5px;">5G</span>
+              <div class="battery-badge">
+                <div class="battery-pill">
+                  <div class="battery-level"></div>
+                </div>
+                <div class="battery-tip"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Functional Dynamic Island -->
+          <div class="dynamic-island-container">
+            <div class="dynamic-island" id="dynamicIsland" title="Tap to expand Dynamic Island" data-clickable="true">
+              <div class="island-sensor-dot"></div>
+              
+              <!-- Compact Pill State -->
+              <div class="island-compact-content">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                <span id="islandCompactText">Cycle 3 Nadir Day 8</span>
+              </div>
+
+              <!-- Expanded Live Activity View -->
+              <div class="island-expanded-content">
+                <div class="island-activity-header">
+                  <div class="island-activity-title">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <span id="islandExpTitle">Cycle 3 Nadir Day 8</span>
+                  </div>
+                  <span class="panel-badge" id="islandExpBadge">Active Care</span>
+                </div>
+                <div class="island-activity-body">
+                  <span id="islandExpSubtitle">Medication due at 1:00 PM</span>
+                  <button class="island-action-pill" data-clickable="true">View Episode</button>
+                </div>
+              </div>
+
+              <div class="island-camera-dot"></div>
+            </div>
+          </div>
+
+          <!-- App Shell -->
+          <div class="app-container">
+            
+            <!-- App Header -->
+            <header class="app-header">
+              <div class="app-brand">
+                <div class="app-brand-logo">CCA</div>
+                <div class="app-title-text">
+                  <div class="app-name">
+                    CCA Cancer Care
+                    <span class="role-tag-pill patient" id="appHeaderRole">Patient</span>
+                  </div>
+                  <span class="episode-tagline" id="appHeaderSub">Ananya Sharma · Adjuvant AC-T Cycle 3 of 6</span>
+                </div>
+              </div>
+
+              <button class="header-action-btn" id="btnHeaderAlert" title="Notifications" data-clickable="true">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                <span class="notif-badge">1</span>
+              </button>
+            </header>
+
+            <!-- Doctor Persistent Safety Header (D03 requirement) -->
+            <div class="doctor-safety-header" id="doctorSafetyHeader" style="display:none;">
+              <div class="safety-patient-info">
+                <span>Ananya Sharma</span>
+                <span class="safety-patient-sub">(DEMO-CCA-10482 · 52 F)</span>
+              </div>
+              <div class="allergy-alert-pill">
+                <span>⚠️ Allergy: Penicillin</span>
+              </div>
+            </div>
+
+            <!-- Doctor Horizontal Context Navigation -->
+            <nav class="doctor-subnav-bar" id="doctorSubnavBar" style="display:none;">
+              <!-- Populated by app.js -->
+            </nav>
+
+            <!-- Scrollable Dynamic Screen View -->
+            <div class="screen-scroll-view" id="appContent">
+              <!-- Dynamically rendered by app.js -->
+            </div>
+
+            <!-- iOS Bottom Tab Bar -->
+            <nav class="ios-tab-bar" id="tabBar">
+              <!-- Dynamically rendered by app.js -->
+            </nav>
+          </div>
+
+          <!-- iOS Bottom Home Indicator Bar -->
+          <div class="ios-home-indicator"></div>
+
+          <!-- Screen Edge Glare -->
+          <div class="screen-edge-glare"></div>
+
+          <!-- Floating iOS Screen Toast -->
+          <div class="screen-toast" id="screenToast">Action recorded</div>
+
+          <!-- Bottom Sheet Modal -->
+          <div class="app-sheet-backdrop" id="bottomSheetModal">
+            <div class="app-bottom-sheet">
+              <div class="sheet-handle"></div>
+              <div class="sheet-title-row">
+                <div class="sheet-title" id="modalTitle">Clinical Details</div>
+                <button class="sheet-close-btn" id="modalCloseBtn" data-clickable="true">&times;</button>
+              </div>
+              <div id="modalBody"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating Toggle for Presenter Panel -->
+    <button class="panel-toggle-btn" id="panelToggleBtn" title="Open Presenter Deck & Scenarios">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg>
+      Presenter Deck & Scenarios
+    </button>
+
+    <!-- Presenter Notes & Scenario Drawer (Figma Presentation Studio) -->
+    <aside class="presenter-panel" id="presenterPanel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          CCA Scenario Control Deck
+        </div>
+        <button class="panel-close-btn" id="panelCloseBtn" title="Close drawer">&times;</button>
+      </div>
+
+      <div class="panel-body">
+        
+        <!-- SECTION 1: CLINICAL EPISODE -->
+        <div>
+          <div class="panel-section-title">
+            <span>SECTION 1 · Clinical Episode</span>
+            <span class="cca-prototype-badge" style="font-size:8.5px;">Synthetic Demo Data</span>
+          </div>
+          <div class="episode-meta-card">
+            <div class="episode-patient-name">
+              <span>Ananya Sharma (52 years)</span>
+              <span class="status-pill verified">Active Cancer Episode</span>
+            </div>
+            <div class="episode-meta-row">
+              <span>Diagnosis:</span>
+              <span class="episode-meta-val">Breast Cancer (Stage IIA IDC)</span>
+            </div>
+            <div class="episode-meta-row">
+              <span>Current Phase:</span>
+              <span class="episode-meta-val">Adjuvant systemic therapy</span>
+            </div>
+            <div class="episode-meta-row">
+              <span>Cycle:</span>
+              <span class="episode-meta-val">3 of 6</span>
+            </div>
+            <div class="episode-meta-row">
+              <span>Current Milestone:</span>
+              <span class="episode-meta-val">Post-treatment / nadir monitoring</span>
+            </div>
+            <div class="episode-meta-row">
+              <span>Medical Oncologist:</span>
+              <span class="episode-meta-val">Dr Anjali Menon</span>
+            </div>
+            <div class="episode-meta-row">
+              <span>Nurse Navigator:</span>
+              <span class="episode-meta-val">Priya Rao</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 2: 11 ONE-CLICK DEMO SCENARIOS -->
+        <div>
+          <div class="panel-section-title">SECTION 2 · Demo Scenarios</div>
+          <div class="scenario-list">
+            
+            <div class="scenario-card" data-scenario="symptom-report" data-clickable="true">
+              <div class="scenario-title">
+                <span>01 Patient reports symptoms</span>
+                <span class="scenario-num">01</span>
+              </div>
+              <div class="scenario-desc">Patient logs 100.6°F fever. Escalates to doctor alert & Dynamic Island.</div>
+            </div>
+
+            <div class="scenario-card" data-scenario="triage-alert" data-clickable="true">
+              <div class="scenario-title">
+                <span>02 Doctor triages alert</span>
+                <span class="scenario-num">02</span>
+              </div>
+              <div class="scenario-desc">Dr Anjali Menon acknowledges emergency triage and reviews vital context.</div>
+            </div>
+
+            <div class="scenario-card" data-scenario="result-available" data-clickable="true">
+              <div class="scenario-title">
+                <span>03 Result becomes available</span>
+                <span class="scenario-num">03</span>
+              </div>
+              <div class="scenario-desc">Day 8 Nadir CBC arrives in doctor inbox as unreleased.</div>
+            </div>
+
+            <div class="scenario-card" data-scenario="release-result" data-clickable="true">
+              <div class="scenario-title">
+                <span>04 Doctor reviews & releases result</span>
+                <span class="scenario-num">04</span>
+              </div>
+              <div class="scenario-desc">Dr Menon adds patient context & releases CBC. Unlocks for Ananya.</div>
+            </div>
+
+            <div class="scenario-card" data-scenario="patient-instruction" data-clickable="true">
+              <div class="scenario-title">
+                <span>05 Doctor issues patient instruction</span>
+                <span class="scenario-num">05</span>
+              </div>
+              <div class="scenario-desc">Dr Menon issues hydration directive. Pushed straight to patient home.</div>
+            </div>
+
+            <div class="scenario-card" data-scenario="update-plan" data-clickable="true">
+              <div class="scenario-title">
+                <span>06 Doctor updates treatment plan</span>
+                <span class="scenario-num">06</span>
+              </div>
+              <div class="scenario-desc">Signs Treatment Plan v2. Plan v1 superseded; patient roadmap updates.</div>
+            </div>
+
+            <div class="scenario-card" data-scenario="upload-doc" data-clickable="true">
+              <div class="scenario-title">
+                <span>07 Patient uploads external document</span>
+                <span class="scenario-num">07</span>
+              </div>
+              <div class="scenario-desc">Uploads pathology PDF. OCR extracts Ki-67 candidate for verification.</div>
+            </div>
+
+            <div class="scenario-card" data-scenario="verify-ocr" data-clickable="true">
+              <div class="scenario-title">
+                <span>08 Doctor verifies OCR fact</span>
+                <span class="scenario-num">08</span>
+              </div>
+              <div class="scenario-desc">Dr Menon reviews & verifies Ki-67 fact, promoting it to clinical facts.</div>
+            </div>
+
+            <div class="scenario-card" data-scenario="run-nexus" data-clickable="true">
+              <div class="scenario-title">
+                <span>09 Run NEXUS demo</span>
+                <span class="scenario-num">09</span>
+              </div>
+              <div class="scenario-desc">Executes NEXUS Run 2 with verified Ki-67 evidence trace.</div>
+            </div>
+
+            <div class="scenario-card" data-scenario="consultation-sign" data-clickable="true">
+              <div class="scenario-title">
+                <span>10 Consultation → Sign → Patient summary</span>
+                <span class="scenario-num">10</span>
+              </div>
+              <div class="scenario-desc">Dr Menon signs note. Releases structured lay Visit Summary to patient.</div>
+            </div>
+
+            <div class="scenario-card" data-scenario="reset-episode" data-clickable="true">
+              <div class="scenario-title">
+                <span>11 Reset episode</span>
+                <span class="scenario-num" style="color:#f87171; background:rgba(239,68,68,0.15);">11</span>
+              </div>
+              <div class="scenario-desc">Restores complete deterministic baseline state.</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- SECTION 3: QUICK SCREENS JUMP -->
+        <div>
+          <div class="panel-section-title">SECTION 3 · Quick Screens</div>
+          
+          <div class="quick-screens-group">
+            <div class="quick-screens-role-title">Doctor Screens:</div>
+            <div class="quick-screens-chips">
+              <span class="screen-chip" data-role="doctor" data-screen="Home" data-clickable="true">Home</span>
+              <span class="screen-chip" data-role="doctor" data-screen="Summary" data-clickable="true">Patient Summary</span>
+              <span class="screen-chip" data-role="doctor" data-screen="Consultation" data-clickable="true">Consultation</span>
+              <span class="screen-chip" data-role="doctor" data-screen="Scribe" data-clickable="true">Voice Scribe</span>
+              <span class="screen-chip" data-role="doctor" data-screen="OCR" data-clickable="true">OCR Review</span>
+              <span class="screen-chip" data-role="doctor" data-screen="NEXUS" data-clickable="true">NEXUS</span>
+              <span class="screen-chip" data-role="doctor" data-screen="Plan" data-clickable="true">Plan</span>
+              <span class="screen-chip" data-role="doctor" data-screen="Staging" data-clickable="true">Staging</span>
+              <span class="screen-chip" data-role="doctor" data-screen="Pathway" data-clickable="true">Pathway</span>
+              <span class="screen-chip" data-role="doctor" data-screen="Results" data-clickable="true">Results</span>
+              <span class="screen-chip" data-role="doctor" data-screen="Tasks" data-clickable="true">Tasks</span>
+              <span class="screen-chip" data-role="doctor" data-screen="Messages" data-clickable="true">Messages</span>
+              <span class="screen-chip" data-role="doctor" data-screen="MDT" data-clickable="true">MDT</span>
+              <span class="screen-chip" data-role="doctor" data-screen="Timeline" data-clickable="true">Timeline</span>
+              <span class="screen-chip" data-role="doctor" data-screen="Profile" data-clickable="true">Profile</span>
+            </div>
+          </div>
+
+          <div class="quick-screens-group">
+            <div class="quick-screens-role-title" style="color: #38bdf8;">Patient Screens:</div>
+            <div class="quick-screens-chips">
+              <span class="screen-chip" data-role="patient" data-screen="Home" data-clickable="true">Home</span>
+              <span class="screen-chip" data-role="patient" data-screen="Roadmap" data-clickable="true">My Care</span>
+              <span class="screen-chip" data-role="patient" data-screen="Appointments" data-clickable="true">Appointments</span>
+              <span class="screen-chip" data-role="patient" data-screen="Medicines" data-clickable="true">Medicines</span>
+              <span class="screen-chip" data-role="patient" data-screen="Symptoms" data-clickable="true">Symptoms</span>
+              <span class="screen-chip" data-role="patient" data-screen="Results" data-clickable="true">Results</span>
+              <span class="screen-chip" data-role="patient" data-screen="Messages" data-clickable="true">Messages</span>
+              <span class="screen-chip" data-role="patient" data-screen="VisitSummary" data-clickable="true">Visit Summary</span>
+              <span class="screen-chip" data-role="patient" data-screen="UrgentHelp" data-clickable="true">Urgent Help</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Reset Confirmation Modal (PRD Section 19) -->
+  <div class="figma-modal-backdrop" id="resetConfirmModal">
+    <div class="figma-modal-card">
+      <div class="figma-modal-title">Reset Demo Scenario?</div>
+      <div class="figma-modal-desc">
+        This will restore all clinical facts, symptom reports, alerts, lab results, and treatment plan versions to the deterministic baseline state.
+      </div>
+      <div class="figma-modal-actions">
+        <button class="btn-secondary" id="cancelResetBtn" data-clickable="true">Cancel</button>
+        <button class="btn-primary-action" id="confirmResetBtn" style="background:#e11d48; width:auto; padding:8px 16px;" data-clickable="true">
+          Reset Demo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Scripts -->
+  <script src="js/state.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
