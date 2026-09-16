@@ -789,128 +789,113 @@ document.addEventListener('DOMContentLoaded', () => {
       const unreleasedRes = state.results.filter(r => r.releaseState === 'UNRELEASED');
 
       html = `
-        <div class="card-header" style="margin-bottom: 8px;">
-          <div>
-            <div class="card-title" style="font-size: 15px;">Good morning, Dr Anjali Menon</div>
-            <div class="card-subtitle">CCA Cancer Centre · Medical Oncology Day Service</div>
-          </div>
-          <span class="status-pill signed">● On Duty</span>
+        <div style="margin-bottom: var(--space-6); padding-top: var(--space-2);">
+          <div style="font-size: 24px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 4px; letter-spacing: -0.5px;">Dr Anjali Menon</div>
+          <div style="font-size: 14px; color: var(--cca-text-secondary);">CCA Cancer Centre · Medical Oncology Day Service</div>
         </div>
 
-        <!-- URGENT ALERTS SECTION (D01) -->
-        ${activeAlerts.length > 0 ? `
-          <div class="card alert-card glow-doctor" data-clickable="true" id="btnGoUrgentAlert">
-            <div class="card-header">
-              <div class="card-title" style="color: #9f1239;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                ! URGENT SYMPTOM ALERT
+        <div style="margin-bottom: var(--space-8);">
+          <div style="font-size: 13px; font-weight: 700; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Needs Attention</div>
+          
+          ${activeAlerts.length > 0 ? `
+            <div class="action-item" data-clickable="true" id="btnGoUrgentAlert" style="margin-bottom: 12px; border-left: 4px solid var(--cca-rose); background: #fff1f2;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 8px;">
+                <div style="font-size: 14px; font-weight: 700; color: #be123c; display:flex; align-items:center; gap:6px;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#be123c" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  Urgent Alert
+                </div>
+                <span style="font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 12px; ${activeAlerts[0].status === 'ACKNOWLEDGED' ? 'background: var(--cca-green-light); color: var(--cca-green);' : 'background: #fecdd3; color: #be123c;'}">
+                  ${activeAlerts[0].status === 'ACKNOWLEDGED' ? '✓ Acknowledged' : 'Immediate Action'}
+                </span>
               </div>
-              <span class="status-pill ${activeAlerts[0].status === 'ACKNOWLEDGED' ? 'verified' : 'urgent'}">
-                ${activeAlerts[0].status === 'ACKNOWLEDGED' ? '✓ Acknowledged' : 'Immediate Action'}
+              <div style="font-size: 15px; font-weight: 700; color: #be123c; margin-bottom: 4px;">${activeAlerts[0].title}</div>
+              <div style="font-size: 13px; color: #9f1239; line-height: 1.45; margin-bottom: 16px;">${activeAlerts[0].details}</div>
+              
+              <div style="display:flex; gap: 8px;">
+                ${activeAlerts[0].status === 'OPEN' ? `
+                  <button class="btn-primary-action doctor-btn" id="btnAckAlert" data-alert-id="${activeAlerts[0].id}" data-clickable="true" style="min-height: 44px; font-size: 13.5px; flex: 1; background: #be123c; border-color: #be123c;">
+                    Acknowledge
+                  </button>
+                ` : `
+                  <button class="btn-secondary" id="btnAckAlert" disabled style="min-height: 44px; font-size: 13.5px; flex: 1; color: var(--cca-green); border-color: rgba(52, 211, 153, 0.4);">
+                    ✓ Acknowledged
+                  </button>
+                `}
+                <button class="btn-secondary" id="btnQuickDirective" data-clickable="true" style="min-height: 44px; font-size: 13.5px; flex: 1; border-color: #be123c; color: #be123c;">
+                  Issue Directive
+                </button>
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- WHAT CHANGED SINCE LAST REVIEW (P1-03 / Doctor Q2) -->
+          <div class="action-item" style="border-left: 4px solid var(--cca-accent-doctor); background: var(--cca-surface-main); margin-bottom: 12px;">
+            <div style="font-size: 14px; font-weight: 700; color: var(--cca-accent-doctor); margin-bottom: 8px;">New since last review</div>
+            <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: var(--cca-text-primary); line-height: 1.6;">
+              ${state.symptomReports.length > 0 ? `<li><strong>PROMs Update:</strong> Patient reported new symptoms (Temp: ${state.symptomReports[0].temperature}°F)</li>` : `<li>No new patient-reported symptoms.</li>`}
+              ${unreleasedRes.length > 0 ? `<li><strong>New Labs:</strong> Day 8 Nadir CBC is pending your review.</li>` : `<li>No new unreviewed lab results.</li>`}
+              ${state.documents.some(d => d.status === 'AWAITING_VERIFICATION') ? `<li><strong>External Data:</strong> New patient document uploaded awaiting OCR verification.</li>` : `<li>No new external documents.</li>`}
+            </ul>
+          </div>
+        </div>
+
+        <div style="margin-bottom: var(--space-8);">
+          <div style="font-size: 13px; font-weight: 700; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Today's Clinic</div>
+
+          <!-- ELEANOR VANCE ACTIVE EPISODE CARD -->
+          <div class="action-item" data-clickable="true" id="btnOpenEleanorSummary">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 8px;">
+              <div>
+                <div style="font-size: 16px; font-weight: 700; color: var(--cca-text-primary);">${state.patient.name}</div>
+                <div style="font-size: 12.5px; color: var(--cca-text-secondary); margin-top:2px;">MRN: ${state.patient.mrn} · ${state.patient.age}y ${state.patient.gender}</div>
+              </div>
+              <span style="font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 12px; background: var(--cca-surface-main); color: var(--cca-text-secondary); border: 1px solid var(--cca-border-subtle);">
+                10:30 AM
               </span>
             </div>
-            <div style="font-size: 13.5px; font-weight: 800; color: #0f172a; margin-bottom: 4px;">${activeAlerts[0].title}</div>
-            <div style="font-size: 12px; color: #9f1239; line-height: 1.45; margin-bottom: 12px;">${activeAlerts[0].details}</div>
             
-            <div style="display:flex; gap: 8px;">
-              ${activeAlerts[0].status === 'OPEN' ? `
-                <button class="btn-primary-action doctor-btn" id="btnAckAlert" data-alert-id="${activeAlerts[0].id}" data-clickable="true" style="min-height: 44px; font-size: 13.5px; flex: 1;">
-                  Acknowledge Alert
-                </button>
-              ` : `
-                <button class="btn-secondary" id="btnAckAlert" disabled style="min-height: 44px; font-size: 13.5px; flex: 1; color: #34d399; border-color: rgba(52, 211, 153, 0.4);">
-                  ✓ Acknowledged
-                </button>
-              `}
-              <button class="btn-secondary" id="btnQuickDirective" data-clickable="true" style="min-height: 44px; font-size: 13.5px; flex: 1;">
-                Issue Directive
-              </button>
+            <div style="font-size: 13.5px; font-weight: 600; color: var(--cca-text-primary); margin-bottom: 4px;">${state.cancerEpisode.diagnosis}</div>
+            <div style="font-size: 12.5px; color: var(--cca-accent-doctor); margin-bottom: 12px;">${state.cancerEpisode.activeRegimen} · ${state.staging.overallStage}</div>
+            
+            <div style="background: var(--cca-surface-main); border: 1px solid var(--cca-border-subtle); padding: 12px; border-radius: var(--radius-md); font-size: 12.5px; color: var(--cca-text-primary);">
+              <span style="color:var(--cca-text-secondary); font-weight:600;">Encounter:</span> Cycle 3 Nadir Review
             </div>
           </div>
-        ` : ''}
-
-        <!-- WHAT CHANGED SINCE LAST REVIEW (P1-03 / Doctor Q2) -->
-        <div class="card" style="border-left: 4px solid #3b82f6; margin-bottom: 10px;">
-          <div class="card-header" style="margin-bottom: 4px;">
-            <div class="card-title" style="color: #1e3a8a;">New since last review (What Changed)</div>
-          </div>
-          <ul style="margin: 0; padding-left: 20px; font-size: 12px; color: #334155; line-height: 1.6;">
-            ${state.symptomReports.length > 0 ? `<li><strong>PROMs Update:</strong> Patient reported new symptoms (Temp: ${state.symptomReports[0].temperature}°F)</li>` : `<li>No new patient-reported symptoms.</li>`}
-            ${unreleasedRes.length > 0 ? `<li><strong>New Labs:</strong> Day 8 Nadir CBC is pending your review.</li>` : `<li>No new unreviewed lab results.</li>`}
-            ${state.documents.some(d => d.status === 'AWAITING_VERIFICATION') ? `<li><strong>External Data:</strong> New patient document uploaded awaiting OCR verification.</li>` : `<li>No new external documents.</li>`}
-          </ul>
         </div>
 
-        <!-- ELEANOR VANCE ACTIVE EPISODE CARD -->
-        <div class="card glow-doctor" data-clickable="true" id="btnOpenEleanorSummary">
-          <div class="card-header">
-            <div>
-              <div class="card-title" style="font-size: 14.5px;">${state.patient.name}</div>
-              <div class="card-subtitle">MRN: ${state.patient.mrn} · ${state.patient.age}y ${state.patient.gender}</div>
-            </div>
-            <span class="status-pill verified">Stage IIA IDC</span>
-          </div>
-
-          <div style="font-size: 12px; color: #334155; margin-bottom: 8px;">
-            <strong>Regimen:</strong> ${state.cancerEpisode.activeRegimen}<br/>
-            <strong>Current Phase:</strong> Cycle 3/6 · Day 8 Nadir Monitoring
-          </div>
-
-          <div style="display:flex; justify-content: space-between; font-size: 11.5px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 10px;">
-            <span>ANC: <strong style="color: #b45309;">1.18 k/µL</strong></span>
-            <span>Temp: <strong>${state.symptomReports[0] ? state.symptomReports[0].temperature : 98.6}°F</strong></span>
-            <span>Next: <strong>Friday Blood Test</strong></span>
-          </div>
-
-          <button class="btn-secondary" style="width: 100%; font-size: 12px;" data-clickable="true">
-            Open Cancer Episode Summary →
-          </button>
-        </div>
-
-        <!-- NEEDS REVIEW WORKLIST -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
-              Needs Clinician Review
-            </div>
-            <span class="status-pill awaiting">${unreleasedRes.length + state.tasks.filter(t => t.status === 'OPEN').length} Items</span>
-          </div>
-
+        <div style="margin-bottom: var(--space-8);">
+          <div style="font-size: 13px; font-weight: 700; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Tasks</div>
+          
           ${unreleasedRes.map(r => `
-            <div class="action-item" style="border-left: 3px solid #f59e0b; margin-bottom: 8px;" data-clickable="true" id="btnGoResult-${r.id}">
-              <div class="action-content">
-                <div class="action-title" style="font-size: 12.5px;">${r.title}</div>
-                <div class="action-desc">ANC 1.18 k/µL · Awaiting physician sign-off & patient release</div>
+            <div class="action-item" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; border-left: 3px solid var(--cca-orange);" data-clickable="true" id="btnGoResult-${r.id}">
+              <div>
+                <div style="font-size: 14px; font-weight: 600; color: var(--cca-text-primary);">Release Lab Result</div>
+                <div style="font-size: 12.5px; color: var(--cca-text-secondary);">${r.title} · ${state.patient.name}</div>
               </div>
-              <span class="status-pill draft">Unreleased</span>
+              <span style="font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 12px; background: var(--cca-orange-light); color: var(--cca-orange);">
+                Unreleased
+              </span>
             </div>
           `).join('')}
 
           ${state.ocrCandidates.filter(c => c.verificationState === 'UNVERIFIED').map(c => `
-            <div class="action-item" style="border-left: 3px solid #38bdf8; margin-bottom: 8px;" data-clickable="true" id="btnGoOCRReview">
-              <div class="action-content">
-                <div class="action-title" style="font-size: 12.5px;">OCR Candidate: ${c.extractedFact}</div>
-                <div class="action-desc">${c.documentTitle} · Extracted ${c.extractedValue} (${c.aiConfidence} conf)</div>
+            <div class="action-item" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; border-left: 3px solid var(--cca-accent-doctor);" data-clickable="true" id="btnGoOCRReview">
+              <div>
+                <div style="font-size: 14px; font-weight: 600; color: var(--cca-text-primary);">Verify OCR Extraction</div>
+                <div style="font-size: 12.5px; color: var(--cca-text-secondary);">${c.extractedFact} · ${state.patient.name}</div>
               </div>
-              <span class="status-pill awaiting">Verify Fact</span>
+              <span style="font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 12px; background: var(--cca-surface-main); color: var(--cca-text-secondary); border: 1px solid var(--cca-border-subtle);">
+                Verify
+              </span>
             </div>
           `).join('')}
-        </div>
-
-        <!-- TODAY'S SCHEDULE -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Today's Scheduled Encounters</div>
-            <span class="status-pill signed">4 Patients</span>
-          </div>
-
-          <div class="patient-card-item" id="btnScheduleEleanor" data-clickable="true">
-            <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
-              <strong style="color:#0f172a; font-size:13px;">Ananya Sharma · 10:15 AM</strong>
-              <span class="status-pill verified">Day Suite #3</span>
+          
+          <div class="action-item" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;" data-clickable="true">
+            <div>
+              <div style="font-size: 14px; font-weight: 600; color: var(--cca-text-primary);">Sign Clinical Note (J. Doe)</div>
+              <div style="font-size: 12.5px; color: var(--cca-text-secondary);">Cycle 2 Follow-up</div>
             </div>
-            <div style="font-size:11.5px; color:#94a3b8;">Cycle 3 Nadir Evaluation & Supportive Care</div>
+            <div style="width:24px; height:24px; border-radius:4px; border:2px solid var(--cca-border-subtle);"></div>
           </div>
         </div>
       `;
@@ -961,108 +946,128 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (screenName === 'Summary') {
       // D03: Patient / Episode Summary
       html = `
-        <div class="card glow-doctor" style="margin-bottom: 10px;">
-          <div class="card-header">
-            <div>
-              <div class="card-title" style="font-size: 15px;">${state.patient.name}</div>
-              <div class="card-subtitle">MRN ${state.patient.mrn} · ${state.patient.age} ${state.patient.gender === 'Female' ? 'F' : 'M'} · ${state.patient.facility || 'CCA Cancer Centre'}</div>
-            </div>
-            <span class="status-pill verified">✓ Active Episode</span>
-          </div>
-
-          <div style="background: ${state.patient.allergies && state.patient.allergies.length > 0 ? '#fee2e2' : '#f0fdf4'}; border-left: 3px solid ${state.patient.allergies && state.patient.allergies.length > 0 ? '#ef4444' : '#22c55e'}; padding: 6px 10px; border-radius: 4px; font-size: 12px; color: ${state.patient.allergies && state.patient.allergies.length > 0 ? '#991b1b' : '#166534'}; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-            <div>
-              <strong style="display:block; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">Allergies</strong>
-              ${state.patient.allergies && state.patient.allergies.length > 0 ? 
-                state.patient.allergies.map(a => `${a.allergen} — ${a.reaction}`).join(' · ') : 
-                (state.patient.allergyStatus === 'NO_KNOWN_DRUG_ALLERGIES' ? 'No known drug allergies' : 'Not recorded')}
-            </div>
-          </div>
-
-          <div style="font-size: 12.5px; line-height: 1.5; color: #1e293b; margin-bottom: 10px;">
-            <strong>Diagnosis:</strong> ${state.cancerEpisode.diagnosis}<br/>
-            <strong>Histology:</strong> ${state.cancerEpisode.histology}<br/>
-            <strong>Biomarkers:</strong> ER 90%+, PR 70%+, HER2 1- (Neg), Ki-67 32%<br/>
-            <strong>Stage:</strong> ${state.staging.overallStage} (${state.staging.t}, ${state.staging.n}, ${state.staging.m})<br/>
-            <strong>Performance:</strong> ${state.cancerEpisode.performanceStatus} · Intent: ${state.cancerEpisode.intent}
-          </div>
-
-          <div class="cycle-progress-wrap" id="btnClickCycleProgress" data-clickable="true">
-            <div class="cycle-steps-bar">
-              <div class="cycle-bar-segment completed"></div>
-              <div class="cycle-bar-segment completed"></div>
-              <div class="cycle-bar-segment active" style="background: linear-gradient(90deg, #4f46e5, #818cf8);"></div>
-              <div class="cycle-bar-segment"></div>
-              <div class="cycle-bar-segment"></div>
-              <div class="cycle-bar-segment"></div>
-            </div>
-            <div class="cycle-meta">
-              <span>Current: <strong>Cycle 3 of 6 (Day 8 Nadir)</strong></span>
-              <span>Next Infusion: <strong>Sep 2 (Cycle 4)</strong></span>
-            </div>
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;">
-            <button class="btn-primary-action doctor-btn" id="btnStartConsultation" data-clickable="true" style="padding: 8px; font-size: 12px;">
-              Start Consultation
-            </button>
-            <button class="btn-secondary" id="btnNavNexus" data-clickable="true" style="padding: 8px; font-size: 12px;">
-              NEXUS Reasoning
-            </button>
-          </div>
+        <div style="margin-bottom: var(--space-6); padding-top: var(--space-2);">
+          <div style="font-size: 24px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 4px; letter-spacing: -0.5px;">${state.patient.name}</div>
+          <div style="font-size: 14px; color: var(--cca-text-secondary);">MRN ${state.patient.mrn} · ${state.patient.age} ${state.patient.gender === 'Female' ? 'F' : 'M'} · ${state.patient.facility || 'CCA Cancer Centre'}</div>
         </div>
 
-        <!-- WHAT CHANGED SINCE LAST REVIEW (P1-03) -->
-        <div class="card" style="border-left: 4px solid #3b82f6; margin-bottom: 10px;">
-          <div class="card-header" style="margin-bottom: 4px;">
-            <div class="card-title" style="color: #1e3a8a;">What Changed Since Last Review</div>
-          </div>
-          <ul style="margin: 0; padding-left: 20px; font-size: 12px; color: #334155; line-height: 1.6;">
-            ${state.symptomReports.length > 0 ? `<li><strong>PROMs Update:</strong> Patient reported new symptoms (Temp: ${state.symptomReports[0].temperature}°F)</li>` : `<li>No new patient-reported symptoms.</li>`}
-            ${state.results.some(r => r.releaseState === 'UNRELEASED') ? `<li><strong>New Labs:</strong> Day 8 Nadir CBC is pending your review.</li>` : `<li>No new unreviewed lab results.</li>`}
-            ${state.documents.some(d => d.status === 'AWAITING_VERIFICATION') ? `<li><strong>External Data:</strong> New patient document uploaded awaiting OCR verification.</li>` : `<li>No new external documents.</li>`}
-          </ul>
-        </div>
-
-        <!-- RECENT SYMPTOM STREAM -->
-        <div class="card" id="btnClickSymptomStream" data-clickable="true">
-          <div class="card-header">
-            <div class="card-title">Recent Symptom Stream (PROMs)</div>
-            <span class="status-pill ${state.symptomReports[0] && state.symptomReports[0].temperature >= 100.4 ? 'urgent' : 'verified'}">
-              ${state.symptomReports[0] && state.symptomReports[0].temperature >= 100.4 ? '! Fever Escalation' : '✓ Stable'}
-            </span>
-          </div>
-
-          <div class="lab-metric-grid">
-            <div class="lab-stat-box">
-              <div class="lab-stat-label">Oral Temperature</div>
-              <div class="lab-stat-val" style="color: ${state.symptomReports[0] && state.symptomReports[0].temperature >= 100.4 ? '#f43f5e' : '#fff'};">
-                ${state.symptomReports[0] ? state.symptomReports[0].temperature : 98.6} <span class="lab-stat-unit">°F</span>
+        <div style="margin-bottom: var(--space-8);">
+          <div style="font-size: 13px; font-weight: 700; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Safety Context</div>
+          
+          <div class="action-item" style="border-left: 4px solid ${state.patient.allergies && state.patient.allergies.length > 0 ? 'var(--cca-rose)' : 'var(--cca-green)'}; background: ${state.patient.allergies && state.patient.allergies.length > 0 ? '#fff1f2' : 'var(--cca-green-light)'};">
+            <div style="display: flex; align-items: flex-start; gap: 8px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${state.patient.allergies && state.patient.allergies.length > 0 ? '#be123c' : 'var(--cca-green)'}" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+              <div>
+                <strong style="display:block; font-size:13.5px; color: ${state.patient.allergies && state.patient.allergies.length > 0 ? '#be123c' : 'var(--cca-green)'}; margin-bottom: 4px;">Allergies / ADR</strong>
+                <div style="font-size: 13px; color: var(--cca-text-primary); line-height: 1.45;">
+                  ${state.patient.allergies && state.patient.allergies.length > 0 ? 
+                    state.patient.allergies.map(a => `<strong>${a.allergen}</strong> — ${a.reaction}`).join('<br/>') : 
+                    (state.patient.allergyStatus === 'NO_KNOWN_DRUG_ALLERGIES' ? 'No known drug allergies (NKDA)' : 'Not recorded')}
+                </div>
               </div>
             </div>
-            <div class="lab-stat-box">
-              <div class="lab-stat-label">Day 8 Nadir ANC</div>
-              <div class="lab-stat-val" style="color: #b45309;">
-                1.18 <span class="lab-stat-unit">k/µL</span>
+          </div>
+        </div>
+
+        <div style="margin-bottom: var(--space-8);">
+          <div style="font-size: 13px; font-weight: 700; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Diagnosis & Staging</div>
+          <div class="action-item">
+            <div style="font-size: 14.5px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 8px;">${state.cancerEpisode.diagnosis}</div>
+            <div style="font-size: 13px; color: var(--cca-text-primary); line-height: 1.6;">
+              <strong>Histology:</strong> ${state.cancerEpisode.histology}<br/>
+              <strong>Biomarkers:</strong> ER 90%+, PR 70%+, HER2 1- (Neg), Ki-67 32%<br/>
+              <strong>Stage:</strong> <span style="color:var(--cca-accent-doctor); font-weight:600;">${state.staging.overallStage}</span> (${state.staging.t}, ${state.staging.n}, ${state.staging.m})<br/>
+              <strong>Performance:</strong> ${state.cancerEpisode.performanceStatus} · Intent: ${state.cancerEpisode.intent}
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: var(--space-8);">
+          <div style="font-size: 13px; font-weight: 700; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Since Last Review</div>
+          
+          <div class="action-item" style="border-left: 4px solid var(--cca-accent-doctor); background: var(--cca-surface-main); margin-bottom: 12px;">
+            <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: var(--cca-text-primary); line-height: 1.6;">
+              ${state.symptomReports.length > 0 ? `<li><strong>PROMs Update:</strong> Patient reported new symptoms (Temp: ${state.symptomReports[0].temperature}°F)</li>` : `<li>No new patient-reported symptoms.</li>`}
+              ${state.results.some(r => r.releaseState === 'UNRELEASED') ? `<li><strong>New Labs:</strong> Day 8 Nadir CBC is pending your review.</li>` : `<li>No new unreviewed lab results.</li>`}
+              ${state.documents.some(d => d.status === 'AWAITING_VERIFICATION') ? `<li><strong>External Data:</strong> New patient document uploaded awaiting OCR verification.</li>` : `<li>No new external documents.</li>`}
+            </ul>
+          </div>
+        </div>
+
+        <div style="margin-bottom: var(--space-8);">
+          <div style="font-size: 13px; font-weight: 700; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Current State</div>
+          
+          <div class="action-item" style="margin-bottom: 12px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom: 8px;">
+              <span style="font-size: 13.5px; font-weight: 600; color: var(--cca-text-primary);">Treatment Phase</span>
+              <span style="font-size: 13.5px; font-weight: 600; color: var(--cca-accent-doctor);">Cycle 3 of 6</span>
+            </div>
+            
+            <div class="cycle-progress-wrap" id="btnClickCycleProgress" data-clickable="true" style="margin: 12px 0; background:none; border:none; padding:0;">
+              <div class="cycle-steps-bar" style="margin-bottom: 8px;">
+                <div class="cycle-bar-segment completed"></div>
+                <div class="cycle-bar-segment completed"></div>
+                <div class="cycle-bar-segment active" style="background: var(--cca-accent-doctor);"></div>
+                <div class="cycle-bar-segment"></div>
+                <div class="cycle-bar-segment"></div>
+                <div class="cycle-bar-segment"></div>
+              </div>
+            </div>
+            
+            <div style="font-size: 13px; color: var(--cca-text-secondary);">
+              Current: Day 8 Nadir Monitoring<br/>
+              Next Infusion: Sep 2 (Cycle 4)
+            </div>
+          </div>
+          
+          <!-- RECENT SYMPTOM STREAM -->
+          <div class="action-item" id="btnClickSymptomStream" data-clickable="true" style="background: var(--cca-surface-main);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+              <div style="font-size: 14px; font-weight: 600; color: var(--cca-text-primary);">Vital Signs & PROMs</div>
+              <span style="font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 12px; ${state.symptomReports[0] && state.symptomReports[0].temperature >= 100.4 ? 'background: #fecdd3; color: #be123c;' : 'background: var(--cca-green-light); color: var(--cca-green);'}">
+                ${state.symptomReports[0] && state.symptomReports[0].temperature >= 100.4 ? '! Fever Escalation' : '✓ Stable'}
+              </span>
+            </div>
+            
+            <div style="display:flex; gap: 16px;">
+              <div style="flex: 1; background: white; padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--cca-border-subtle);">
+                <div style="font-size: 12px; color: var(--cca-text-secondary); margin-bottom: 4px;">Oral Temperature</div>
+                <div style="font-size: 16px; font-weight: 700; color: ${state.symptomReports[0] && state.symptomReports[0].temperature >= 100.4 ? '#be123c' : 'var(--cca-text-primary)'};">
+                  ${state.symptomReports[0] ? state.symptomReports[0].temperature : 98.6} <span style="font-size: 12px; font-weight: 600; color: var(--cca-text-secondary);">°F</span>
+                </div>
+              </div>
+              <div style="flex: 1; background: white; padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--cca-border-subtle);">
+                <div style="font-size: 12px; color: var(--cca-text-secondary); margin-bottom: 4px;">Day 8 Nadir ANC</div>
+                <div style="font-size: 16px; font-weight: 700; color: var(--cca-orange);">
+                  1.18 <span style="font-size: 12px; font-weight: 600; color: var(--cca-text-secondary);">k/µL</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         <!-- QUICK EPISODE SHORTCUTS -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-          <button class="btn-secondary" id="btnSummResults" data-clickable="true" style="font-size:11.5px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: var(--space-8);">
+          <button class="btn-secondary" id="btnSummResults" data-clickable="true" style="font-size:12.5px;">
             🧪 Lab Results (${state.results.length})
           </button>
-          <button class="btn-secondary" id="btnSummPlan" data-clickable="true" style="font-size:11.5px;">
+          <button class="btn-secondary" id="btnSummPlan" data-clickable="true" style="font-size:12.5px;">
             📋 Treatment Plan (v${state.cancerEpisode.activePlanVersion || 1})
           </button>
-          <button class="btn-secondary" id="btnSummOCR" data-clickable="true" style="font-size:11.5px;">
+          <button class="btn-secondary" id="btnSummOCR" data-clickable="true" style="font-size:12.5px;">
             📄 OCR Review (${state.ocrCandidates.length})
           </button>
-          <button class="btn-secondary" id="btnSummMDT" data-clickable="true" style="font-size:11.5px;">
+          <button class="btn-secondary" id="btnSummMDT" data-clickable="true" style="font-size:12.5px;">
             👥 MDT Discussion
+          </button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px;">
+          <button class="btn-primary-action doctor-btn" id="btnStartConsultation" data-clickable="true" style="padding: 12px; font-size: 14px;">
+            Start Consultation
+          </button>
+          <button class="btn-secondary" id="btnNavNexus" data-clickable="true" style="padding: 12px; font-size: 14px; border-color: var(--cca-accent-doctor); color: var(--cca-accent-doctor);">
+            NEXUS Reasoning
           </button>
         </div>
       `;
@@ -1072,66 +1077,71 @@ document.addEventListener('DOMContentLoaded', () => {
       const draft = store.consultationDraft;
 
       html = `
-        <div class="card-header" style="margin-bottom: 8px;">
-          <div class="card-title">Consultation Workspace</div>
-          <span class="status-pill ${draft.isSigned ? 'signed' : 'draft'}">
-            ${draft.isSigned ? '✓ SIGNED' : '● DRAFT'}
-          </span>
+        <div style="margin-bottom: var(--space-6); padding-top: var(--space-2);">
+          <div style="font-size: 24px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 4px; letter-spacing: -0.5px;">Consultation Workspace</div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 13px; font-weight: 700; padding: 4px 8px; border-radius: 12px; ${draft.isSigned ? 'background: var(--cca-green-light); color: var(--cca-green);' : 'background: var(--cca-orange-light); color: var(--cca-orange);'}">
+              ${draft.isSigned ? '✓ SIGNED' : '● DRAFT'}
+            </span>
+            <span style="font-size: 13px; color: var(--cca-text-secondary);">Dr Anjali Menon</span>
+          </div>
         </div>
 
-        <div class="card">
-          <div style="font-size: 11.5px; color: #4338ca; margin-bottom: 8px;">
-            <strong>Attending:</strong> Dr Anjali Menon · Treating Medical Oncologist
-          </div>
+        <div class="action-item" style="margin-bottom: var(--space-8); background: var(--cca-surface-main); border: 1px dashed var(--cca-border-subtle); display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-size: 14px; font-weight: 600; color: var(--cca-text-primary);">Ambient Voice Scribe</div>
+          <button class="btn-secondary" id="btnLaunchScribe" data-clickable="true" style="font-size: 13px; padding: 6px 12px; border-color: var(--cca-accent-doctor); color: var(--cca-accent-doctor);">
+            🎙️ Launch AI Scribe
+          </button>
+        </div>
 
-          <div style="display:flex; justify-content: space-between; margin-bottom: 10px;">
-            <button class="btn-secondary" id="btnLaunchScribe" data-clickable="true" style="font-size: 11.5px; padding: 6px 12px;">
-              🎙️ Open Voice Scribe
+        <div style="margin-bottom: var(--space-8);">
+          <div style="font-size: 13px; font-weight: 700; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Clinical Note</div>
+          
+          <div class="action-item" style="padding: 16px; background: white; border: 1px solid var(--cca-border-subtle); border-radius: var(--radius-lg);">
+            
+            <details open style="margin-bottom: 16px; border-bottom: 1px solid var(--cca-border-subtle); padding-bottom: 12px;">
+              <summary style="font-size: 14px; font-weight: 700; color: var(--cca-text-primary); cursor: pointer; outline:none; user-select:none;">Reason for Review</summary>
+              <input type="text" class="app-text-input" id="consultReasonInput" value="${draft.reason}" ${draft.isSigned ? 'disabled' : ''} data-clickable="true" style="margin-top: 12px;" />
+            </details>
+
+            <details open style="margin-bottom: 16px; border-bottom: 1px solid var(--cca-border-subtle); padding-bottom: 12px;">
+              <summary style="font-size: 14px; font-weight: 700; color: var(--cca-text-primary); cursor: pointer; outline:none; user-select:none;">History of Present Illness (HPI)</summary>
+              <textarea class="app-textarea" id="consultHpiInput" rows="3" ${draft.isSigned ? 'disabled' : ''} data-clickable="true" style="margin-top: 12px;">${draft.hpi}</textarea>
+            </details>
+
+            <details style="margin-bottom: 16px; border-bottom: 1px solid var(--cca-border-subtle); padding-bottom: 12px;">
+              <summary style="font-size: 14px; font-weight: 700; color: var(--cca-text-primary); cursor: pointer; outline:none; user-select:none;">Physical Examination</summary>
+              <textarea class="app-textarea" id="consultExamInput" rows="3" ${draft.isSigned ? 'disabled' : ''} data-clickable="true" style="margin-top: 12px;">${draft.examination}</textarea>
+            </details>
+
+            <details open style="margin-bottom: 4px;">
+              <summary style="font-size: 14px; font-weight: 700; color: var(--cca-text-primary); cursor: pointer; outline:none; user-select:none;">Assessment & Plan</summary>
+              <textarea class="app-textarea" id="consultAssessmentInput" rows="4" ${draft.isSigned ? 'disabled' : ''} data-clickable="true" style="margin-top: 12px;">${draft.assessment}\n\n${draft.plan}</textarea>
+            </details>
+          </div>
+        </div>
+
+        ${!draft.isSigned ? `
+          <div style="display:flex; gap: 12px; margin-bottom: var(--space-8);">
+            <button class="btn-secondary" id="btnSaveConsultDraft" data-clickable="true" style="flex:1; padding: 14px; font-size: 14px;">
+              Save Draft
             </button>
-            <span class="status-pill awaiting">Consent Active</span>
+            <button class="btn-primary-action doctor-btn" id="btnSignConsultationModal" data-clickable="true" style="flex:2; padding: 14px; font-size: 14px;">
+              Review & Sign
+            </button>
           </div>
-
-          <div style="font-size: 12.5px; color: #334155; line-height: 1.45; display:flex; flex-direction:column; gap: 14px;">
-            <div>
-              <label style="display:block; font-size:12px; font-weight:600; color:#334155; margin-bottom:6px;">Reason for Review:</label>
-              <input type="text" class="app-text-input" id="consultReasonInput" value="${draft.reason}" ${draft.isSigned ? 'disabled' : ''} data-clickable="true" />
+        ` : `
+          <div class="action-item" style="margin-bottom: var(--space-8); background: var(--cca-green-light); border: 1px solid var(--cca-green);">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom: 4px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--cca-green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              <div style="font-size: 14px; font-weight: 700; color: var(--cca-green);">Note Electronically Signed</div>
             </div>
-
-            <div>
-              <label style="display:block; font-size:12px; font-weight:600; color:#334155; margin-bottom:6px;">History of Present Illness (HPI):</label>
-              <textarea class="app-textarea" id="consultHpiInput" rows="2" ${draft.isSigned ? 'disabled' : ''} data-clickable="true">${draft.hpi}</textarea>
-            </div>
-
-            <div>
-              <label style="display:block; font-size:12px; font-weight:600; color:#334155; margin-bottom:6px;">Physical Examination:</label>
-              <textarea class="app-textarea" id="consultExamInput" rows="2" ${draft.isSigned ? 'disabled' : ''} data-clickable="true">${draft.examination}</textarea>
-            </div>
-
-            <div>
-              <label style="display:block; font-size:12px; font-weight:600; color:#334155; margin-bottom:6px;">Assessment & Plan:</label>
-              <textarea class="app-textarea" id="consultAssessmentInput" rows="3" ${draft.isSigned ? 'disabled' : ''} data-clickable="true">${draft.assessment}\n\n${draft.plan}</textarea>
-            </div>
+            <div style="font-size: 12.5px; color: var(--cca-text-primary); margin-left: 28px;">By Dr Anjali Menon (PKI-CCA-84920) · Patient Visit Summary released.</div>
+            <button class="btn-secondary" id="btnAddAddendum" data-clickable="true" style="margin-top: 12px; margin-left: 28px; font-size: 12.5px;">
+              + Add Formal Addendum
+            </button>
           </div>
-
-          ${!draft.isSigned ? `
-            <div style="margin-top: 14px; display:flex; gap: 8px;">
-              <button class="btn-secondary" id="btnSaveConsultDraft" data-clickable="true" style="flex:1;">
-                Save Draft
-              </button>
-              <button class="btn-primary-action doctor-btn" id="btnSignConsultationModal" data-clickable="true" style="flex:2;">
-                ✓ Review & Sign
-              </button>
-            </div>
-          ` : `
-            <div style="margin-top: 12px; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); padding: 10px; border-radius: 8px;">
-              <div style="font-size: 12px; font-weight: 700; color: #34d399;">✓ Note Electronically Signed</div>
-              <div style="font-size: 11px; color: #334155;">By Dr Anjali Menon (PKI-CCA-84920) · Patient Visit Summary released.</div>
-              <button class="btn-secondary" id="btnAddAddendum" data-clickable="true" style="margin-top: 8px; width: 100%; font-size: 11.5px;">
-                + Add Formal Addendum
-              </button>
-            </div>
-          `}
-        </div>
+        `}
       `;
     } else if (screenName === 'Scribe') {
       // D05: Voice Scribe
@@ -1232,75 +1242,89 @@ document.addEventListener('DOMContentLoaded', () => {
       const ki67Verified = state.clinicalFacts.some(f => f.name.includes('Ki-67') && f.verified);
 
       html = `
-        <div class="nexus-cds-banner">
-          <div class="nexus-disclaimer">NEXUS CLINICAL DECISION SUPPORT · NOT AN AI DOCTOR</div>
-          <div style="font-size: 14px; font-weight: 800; color: #0f172a; margin-bottom: 4px;">
-            Evidence-Based Treatment Guidance
-          </div>
-          <div style="font-size: 11.5px; color: #334155;">NCCN v2.2026 Guidelines · Invasive Breast Cancer Stage IIA</div>
+        <div style="margin-bottom: var(--space-6); padding-top: var(--space-2);">
+          <div style="font-size: 24px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 4px; letter-spacing: -0.5px;">NEXUS Support</div>
+          <div style="font-size: 14px; color: var(--cca-text-secondary);">Evidence-Based Treatment Guidance</div>
         </div>
 
-        <!-- SNAPSHOT 2 (If Run) -->
-        ${s2 ? `
-          <div class="card glow-doctor" style="border-left: 4px solid #10b981;">
-            <div class="card-header">
-              <div class="card-title" style="font-size: 13.5px;">Snapshot 2 (Latest Execution)</div>
-              <span class="status-pill verified">✓ Evidence Confirmed</span>
-            </div>
-            <div style="font-size: 12px; color: #334155; margin-bottom: 8px;">${s2.clinicalPicture}</div>
+        <div style="margin-bottom: var(--space-8);">
+          <div style="font-size: 13px; font-weight: 700; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Clinical Context</div>
+          <div class="action-item">
+            <div style="font-size: 14px; font-weight: 600; color: var(--cca-text-primary); margin-bottom: 4px;">NCCN v2.2026 Guidelines</div>
+            <div style="font-size: 13px; color: var(--cca-text-secondary);">Invasive Breast Cancer Stage IIA</div>
+            <div style="font-size: 11px; font-weight: 700; color: var(--cca-orange); margin-top: 8px;">NEXUS IS A DECISION SUPPORT TOOL · NOT AN AI DOCTOR</div>
+          </div>
+        </div>
 
-            <div class="nexus-option-card">
-              <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
-                <strong style="color:#0f172a; font-size:12.5px;">Curative Adjuvant Dose-Dense AC-T</strong>
-                <span class="nexus-evidence-tag">Category 1</span>
+        <div style="margin-bottom: var(--space-8);">
+          <div style="font-size: 13px; font-weight: 700; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Evaluation Runs</div>
+          
+          <!-- SNAPSHOT 2 (If Run) -->
+          ${s2 ? `
+            <details open class="action-item" style="margin-bottom: 12px; border-left: 4px solid var(--cca-green);">
+              <summary style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; outline:none; user-select:none;">
+                <div style="font-size: 14.5px; font-weight: 700; color: var(--cca-text-primary);">Snapshot 2 (Latest Execution)</div>
+                <span style="font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 12px; background: var(--cca-green-light); color: var(--cca-green);">✓ Evidence Confirmed</span>
+              </summary>
+              <div style="margin-top: 12px;">
+                <div style="font-size: 13px; color: var(--cca-text-primary); margin-bottom: 16px; line-height: 1.5;">${s2.clinicalPicture}</div>
+
+                <div style="background: var(--cca-surface-main); border: 1px solid var(--cca-border-subtle); padding: 16px; border-radius: var(--radius-md); margin-bottom: 16px;">
+                  <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                    <strong style="color:var(--cca-text-primary); font-size:14px;">Curative Adjuvant Dose-Dense AC-T</strong>
+                    <span style="font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #e0e7ff; color: #4338ca;">Category 1</span>
+                  </div>
+                  <div style="font-size: 13px; color: var(--cca-text-secondary); line-height: 1.5;">High proliferation (Ki-67 35% verified) and 2.6cm tumor size confirms systemic chemotherapy benefit.</div>
+                </div>
+
+                <div style="display:flex; gap:12px;">
+                  <button class="btn-primary-action doctor-btn" id="btnAttachSnapshotPlan" data-clickable="true" style="flex:1; padding: 12px; font-size:13px;">
+                    Attach to Treatment Plan
+                  </button>
+                  <button class="btn-secondary" id="btnNavPathway" data-clickable="true" style="flex:1; padding: 12px; font-size:13px;">
+                    View Guideline Trace
+                  </button>
+                </div>
               </div>
-              <div style="font-size: 11.5px; color: #94a3b8;">High proliferation (Ki-67 35% verified) and 2.6cm tumor size confirms systemic chemotherapy benefit.</div>
-            </div>
-
-            <div style="display:flex; gap:6px; margin-top:8px;">
-              <button class="btn-secondary" id="btnAttachSnapshotPlan" data-clickable="true" style="flex:1; font-size:11px;">
-                Attach to Treatment Plan
-              </button>
-              <button class="btn-secondary" id="btnNavPathway" data-clickable="true" style="flex:1; font-size:11px;">
-                View Guideline Trace →
-              </button>
-            </div>
-          </div>
-        ` : ''}
-
-        <!-- SNAPSHOT 1 -->
-        <div class="card" style="border-left: 4px solid ${s2 ? '#64748b' : '#f59e0b'};">
-          <div class="card-header">
-            <div class="card-title" style="font-size: 13.5px;">Snapshot 1 (Initial Evaluation)</div>
-            <span class="status-pill ${s2 ? 'superseded' : 'draft'}">
-              ${s2 ? '↻ Historical Run' : '! Needs Information'}
-            </span>
-          </div>
-
-          ${!s2 && !ki67Verified ? `
-            <div class="nexus-missing-info-box">
-              <strong>Missing Pathway-Changing Fact:</strong><br/>
-              Ki-67 proliferation index or Genomic Recurrence Score is required to confirm chemotherapy benefit.
-            </div>
-            <div style="display:flex; gap:6px; margin-bottom:8px;">
-              <button class="btn-secondary" id="btnResolveMissingFact" data-clickable="true" style="flex:1; font-size:11.5px;">
-                Verify Ki-67 Fact →
-              </button>
-              <button class="btn-secondary" id="btnOpenEvidence" data-clickable="true" style="flex:1; font-size:11.5px;">
-                Open Evidence Snippet
-              </button>
-            </div>
+            </details>
           ` : ''}
 
-          <div style="font-size: 11.5px; color: #334155; margin-top: 6px;">
-            ${s1 ? s1.clinicalPicture : ''}
-          </div>
+          <!-- SNAPSHOT 1 -->
+          <details ${s2 ? '' : 'open'} class="action-item" style="border-left: 4px solid ${s2 ? 'var(--cca-border-subtle)' : 'var(--cca-orange)'}; opacity: ${s2 ? '0.7' : '1'};">
+            <summary style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; outline:none; user-select:none;">
+              <div style="font-size: 14.5px; font-weight: 700; color: var(--cca-text-primary);">Snapshot 1 (Initial Evaluation)</div>
+              <span style="font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 12px; ${s2 ? 'background: var(--cca-surface-main); color: var(--cca-text-secondary); border: 1px solid var(--cca-border-subtle);' : 'background: var(--cca-orange-light); color: var(--cca-orange);'}">
+                ${s2 ? '↻ Historical Run' : '! Needs Information'}
+              </span>
+            </summary>
+            
+            <div style="margin-top: 12px;">
+              ${!s2 && !ki67Verified ? `
+                <div style="background: #fffbeb; border: 1px solid #fcd34d; padding: 12px; border-radius: var(--radius-md); margin-bottom: 16px;">
+                  <strong style="font-size: 13px; color: #b45309;">Missing Pathway-Changing Fact:</strong><br/>
+                  <span style="font-size: 13px; color: #92400e;">Ki-67 proliferation index or Genomic Recurrence Score is required to confirm chemotherapy benefit.</span>
+                </div>
+                <div style="display:flex; gap:12px; margin-bottom:16px;">
+                  <button class="btn-primary-action doctor-btn" id="btnResolveMissingFact" data-clickable="true" style="flex:1; padding: 10px; font-size:13px; background: #f59e0b; border-color: #f59e0b;">
+                    Verify Ki-67 Fact
+                  </button>
+                  <button class="btn-secondary" id="btnOpenEvidence" data-clickable="true" style="flex:1; padding: 10px; font-size:13px;">
+                    Open Evidence Snippet
+                  </button>
+                </div>
+              ` : ''}
 
-          ${!s2 ? `
-            <button class="btn-primary-action doctor-btn" id="btnReRunNexus" data-clickable="true" style="margin-top: 10px; font-size: 12px; padding: 8px;">
-              ⚡ Re-run NEXUS with Verified Evidence
-            </button>
-          ` : ''}
+              <div style="font-size: 13px; color: var(--cca-text-primary); line-height: 1.5; margin-bottom: 12px;">
+                ${s1 ? s1.clinicalPicture : ''}
+              </div>
+
+              ${!s2 ? `
+                <button class="btn-secondary" id="btnReRunNexus" data-clickable="true" style="width:100%; padding: 12px; font-size: 13px; border-color: var(--cca-accent-doctor); color: var(--cca-accent-doctor);">
+                  ⚡ Re-run NEXUS with Verified Evidence
+                </button>
+              ` : ''}
+            </div>
+          </details>
         </div>
       `;
     } else if (screenName === 'Plan') {
@@ -1310,75 +1334,97 @@ document.addEventListener('DOMContentLoaded', () => {
       const supersededPlans = state.treatmentPlans.filter(p => p.status === 'SUPERSEDED');
 
       html = `
-        <div class="card-header" style="margin-bottom: 8px;">
-          <div class="card-title">Treatment Plan Management</div>
-          <span class="status-pill signed">✓ PLAN v${currentPlan ? currentPlan.version : 1} SIGNED</span>
+        <div style="margin-bottom: var(--space-6); padding-top: var(--space-2);">
+          <div style="font-size: 24px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 4px; letter-spacing: -0.5px;">Treatment Plan</div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 13px; font-weight: 700; padding: 4px 8px; border-radius: 12px; background: var(--cca-green-light); color: var(--cca-green);">
+              ✓ PLAN v${currentPlan ? currentPlan.version : 1} SIGNED
+            </span>
+          </div>
         </div>
 
         <!-- DRAFT PLAN (If initiated) -->
         ${draftPlan ? `
-          <div class="card glow-doctor" style="border-left: 4px solid #f59e0b;">
-            <div class="card-header">
-              <div class="card-title" style="font-size: 13.5px;">Plan v${draftPlan.version} (Draft Revision)</div>
-              <span class="status-pill draft">● DRAFT</span>
+          <div class="action-item" style="border-left: 4px solid var(--cca-orange); margin-bottom: var(--space-8);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+              <div style="font-size: 14.5px; font-weight: 700; color: var(--cca-text-primary);">Plan v${draftPlan.version} (Draft Revision)</div>
+              <span style="font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 12px; background: var(--cca-orange-light); color: var(--cca-orange);">● DRAFT</span>
             </div>
-            <div style="font-size: 12px; color: #334155; margin-bottom: 8px;">
-              <strong>Revised Patient Instructions:</strong><br/>
-              <textarea id="draftPlanNotesInput" rows="2" style="width:100%; background:#f8fafc; border:1px solid #e2e8f0; border:1px solid rgba(255,255,255,0.1); color:#0f172a; padding:6px; border-radius:6px; margin-top:4px; font-size:12px;" data-clickable="true">${draftPlan.patientInstructions}</textarea>
+            
+            <div style="font-size: 13px; color: var(--cca-text-primary); margin-bottom: 12px;">
+              <strong style="display:block; color:var(--cca-text-secondary); margin-bottom: 4px;">Revised Patient Instructions:</strong>
+              <textarea class="app-textarea" id="draftPlanNotesInput" rows="3" data-clickable="true">${draftPlan.patientInstructions}</textarea>
             </div>
-            <button class="btn-primary-action doctor-btn" id="btnSignPlanDraftModal" data-version="${draftPlan.version}" data-clickable="true">
+            
+            <button class="btn-primary-action doctor-btn" id="btnSignPlanDraftModal" data-version="${draftPlan.version}" data-clickable="true" style="width:100%; padding: 12px; font-size: 14px;">
               ✓ Review & Sign Plan v${draftPlan.version}
             </button>
           </div>
         ` : `
-          <div style="margin-bottom: 10px;">
-            <button class="btn-secondary" id="btnCreatePlanRevision" data-clickable="true" style="width: 100%;">
+          <div style="margin-bottom: var(--space-8);">
+            <button class="btn-secondary" id="btnCreatePlanRevision" data-clickable="true" style="width: 100%; padding: 14px; border-style: dashed;">
               + Create Plan Revision (Draft v2)
             </button>
           </div>
         `}
 
         <!-- CURRENT SIGNED PLAN -->
-        <div class="card glow-doctor">
-          <div class="card-header">
-            <div class="card-title" style="font-size: 13.5px;">Plan v${currentPlan ? currentPlan.version : 1} (Current Active)</div>
-            <span class="status-pill signed">✓ Active Protocol</span>
-          </div>
-
-          <!-- P1-04: Patient Delivery State -->
-          <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(59, 130, 246, 0.05); padding: 8px; border-radius: 6px; margin-bottom: 8px;">
-            <div style="font-size: 11.5px; font-weight: 600; color: #1e3a8a;">Patient App Delivery Status:</div>
-            <span class="status-pill verified">✓ Received & Reviewed by Patient</span>
-          </div>
-
-          <div style="font-size: 12px; color: #334155; line-height: 1.5; margin-bottom: 8px;">
-            <strong>Intent:</strong> Curative Adjuvant · 1st Line<br/>
-            <strong>Signed by:</strong> ${currentPlan ? currentPlan.signedBy : 'Dr Anjali Menon'} · ${currentPlan ? currentPlan.signedAt : 'July 20'}<br/>
-            <strong>Patient Instructions:</strong> ${currentPlan ? currentPlan.patientInstructions : ''}
-          </div>
-
-          <div style="font-size: 11.5px; font-weight: 700; color: #4338ca; margin-bottom: 4px;">Treatment Modality Sequence:</div>
-          ${(currentPlan ? currentPlan.modalities : []).map(m => `
-            <div style="font-size: 11.5px; color: #1e293b; display:flex; justify-content:space-between; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-              <span>${m.modality}: ${m.description}</span>
-              <span class="status-pill ${m.status === 'COMPLETED' ? 'signed' : (m.status === 'IN_PROGRESS' ? 'verified' : 'awaiting')}">${m.status}</span>
+        <div style="margin-bottom: var(--space-8);">
+          <div style="font-size: 13px; font-weight: 700; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Active Protocol (v${currentPlan ? currentPlan.version : 1})</div>
+          
+          <div class="action-item" style="padding:0; overflow:hidden;">
+            <div style="padding: 16px; background: var(--cca-surface-main); border-bottom: 1px solid var(--cca-border-subtle);">
+              <div style="font-size: 13px; color: var(--cca-text-primary); line-height: 1.6;">
+                <strong>Intent:</strong> Curative Adjuvant · 1st Line<br/>
+                <strong>Signed by:</strong> ${currentPlan ? currentPlan.signedBy : 'Dr Anjali Menon'} · ${currentPlan ? currentPlan.signedAt : 'July 20'}<br/>
+                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--cca-border-subtle);">
+                  <strong>Patient Instructions:</strong> ${currentPlan ? currentPlan.patientInstructions : ''}
+                </div>
+              </div>
             </div>
-          `).join('')}
+            
+            <div style="padding: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; background: var(--cca-green-light); padding: 10px 12px; border-radius: var(--radius-md); margin-bottom: 16px;">
+                <div style="font-size: 13px; font-weight: 600; color: var(--cca-green);">Patient App Delivery Status:</div>
+                <div style="font-size: 13px; color: var(--cca-green);">✓ Received & Reviewed</div>
+              </div>
+
+              <div style="font-size: 13px; font-weight: 700; color: var(--cca-text-secondary); margin-bottom: 8px;">Treatment Modality Sequence:</div>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                ${(currentPlan ? currentPlan.modalities : []).map(m => `
+                  <div style="background: white; border: 1px solid var(--cca-border-subtle); padding: 12px; border-radius: var(--radius-md); display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                      <div style="font-size: 14px; font-weight: 600; color: var(--cca-text-primary); margin-bottom: 2px;">${m.modality}</div>
+                      <div style="font-size: 12px; color: var(--cca-text-secondary);">${m.description}</div>
+                    </div>
+                    <span style="font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 12px; ${m.status === 'COMPLETED' ? 'background: var(--cca-green-light); color: var(--cca-green);' : (m.status === 'IN_PROGRESS' ? 'background: #e0e7ff; color: #4338ca;' : 'background: var(--cca-surface-main); color: var(--cca-text-secondary);')}">
+                      ${m.status}
+                    </span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- SUPERSEDED PLANS -->
-        ${supersededPlans.map(sp => `
-          <div class="card" style="opacity: 0.75; border-left: 4px solid #64748b;">
-            <div class="card-header">
-              <div class="card-title" style="font-size: 12.5px;">Plan v${sp.version} (Superseded)</div>
-              <span class="status-pill superseded">↻ Superseded by ${sp.supersededBy}</span>
-            </div>
-            <div style="font-size: 11.5px; color: #94a3b8;">
-              Reason: ${sp.supersededReason}<br/>
-              Signed originally: ${sp.signedAt}
-            </div>
+        ${supersededPlans.length > 0 ? `
+          <div style="margin-bottom: var(--space-8);">
+            <div style="font-size: 13px; font-weight: 700; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Historical Revisions</div>
+            ${supersededPlans.map(sp => `
+              <div class="action-item" style="opacity: 0.75; border-left: 4px solid var(--cca-border-subtle); margin-bottom: 8px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom: 6px;">
+                  <div style="font-size: 14px; font-weight: 600; color: var(--cca-text-primary);">Plan v${sp.version} (Superseded)</div>
+                  <span style="font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: var(--cca-surface-main); color: var(--cca-text-secondary);">↻ Superseded by ${sp.supersededBy}</span>
+                </div>
+                <div style="font-size: 12.5px; color: var(--cca-text-secondary);">
+                  <strong>Reason:</strong> ${sp.supersededReason}<br/>
+                  <strong>Signed originally:</strong> ${sp.signedAt}
+                </div>
+              </div>
+            `).join('')}
           </div>
-        `).join('')}
+        ` : ''}
       `;
     } else if (screenName === 'Cycle') {
       // D11: Cycle Decision
@@ -1467,38 +1513,54 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (screenName === 'Tasks') {
       // D16: Tasks & Alerts
       html = `
-        <div class="card-header" style="margin-bottom: 8px;">
-          <div class="card-title">Tasks & Escalation Alerts</div>
-          <span class="status-pill urgent">${state.tasks.filter(t => t.status === 'OPEN').length} Open</span>
+        <div style="margin-bottom: var(--space-6); padding-top: var(--space-2);">
+          <div style="font-size: 24px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 4px; letter-spacing: -0.5px;">Tasks & Alerts</div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 13px; font-weight: 700; padding: 4px 8px; border-radius: 12px; background: #fecdd3; color: #be123c;">
+              ${state.tasks.filter(t => t.status === 'OPEN').length} Open
+            </span>
+            <span style="font-size: 13px; color: var(--cca-text-secondary);">Inbox</span>
+          </div>
         </div>
 
-        ${state.tasks.map(t => `
-          <div class="action-item" style="border-left: 3px solid ${t.priority === 'URGENT' ? '#f43f5e' : '#38bdf8'}; margin-bottom: 8px;" data-task-id="${t.id}" data-task-type="${t.type}" data-clickable="true">
-            <div class="action-content">
-              <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
-                <span class="action-title" style="font-size: 13px;">${t.title}</span>
-                <span class="status-pill ${t.status === 'RESOLVED' ? 'signed' : (t.priority === 'URGENT' ? 'urgent' : 'draft')}">${t.status}</span>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          ${state.tasks.map(t => `
+            <div class="action-item" style="border-left: 4px solid ${t.priority === 'URGENT' ? 'var(--cca-rose)' : 'var(--cca-blue)'};" data-task-id="${t.id}" data-task-type="${t.type}" data-clickable="true">
+              <div style="display:flex; justify-content:space-between; margin-bottom: 6px;">
+                <div style="font-size: 14.5px; font-weight: 600; color: var(--cca-text-primary);">${t.title}</div>
+                <span style="font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 12px; ${t.status === 'RESOLVED' ? 'background: var(--cca-green-light); color: var(--cca-green);' : (t.priority === 'URGENT' ? 'background: #fecdd3; color: #be123c;' : 'background: var(--cca-orange-light); color: var(--cca-orange);')}">
+                  ${t.status}
+                </span>
               </div>
-              <div class="action-desc">Assigned to: ${t.assignedTo} · Due: ${t.dueAt}</div>
+              <div style="font-size: 12.5px; color: var(--cca-text-secondary);">
+                <strong>Assigned to:</strong> ${t.assignedTo}<br/>
+                <strong>Due:</strong> ${t.dueAt}
+              </div>
             </div>
-          </div>
-        `).join('')}
+          `).join('')}
+        </div>
       `;
     } else if (screenName === 'Timeline') {
       // D15: Longitudinal Timeline
       html = `
-        <div class="card-header" style="margin-bottom: 8px;">
-          <div class="card-title">Longitudinal Episode Timeline</div>
-          <span class="status-pill verified">Authoritative Audit</span>
+        <div style="margin-bottom: var(--space-6); padding-top: var(--space-2);">
+          <div style="font-size: 24px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 4px; letter-spacing: -0.5px;">Longitudinal Timeline</div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 13px; font-weight: 700; padding: 4px 8px; border-radius: 12px; background: var(--cca-green-light); color: var(--cca-green);">
+              ✓ Authoritative Audit
+            </span>
+          </div>
         </div>
 
-        <div class="roadmap-timeline">
+        <div class="roadmap-timeline" style="margin-top: var(--space-6);">
           ${state.auditEvents.map(ev => `
-            <div class="roadmap-step completed" data-audit-action="${ev.action}" data-clickable="true">
-              <div class="roadmap-node">✓</div>
-              <div class="roadmap-step-title" style="font-size: 12px;">${ev.action}</div>
-              <div class="roadmap-step-desc">${ev.summary}</div>
-              <div style="font-size: 10px; color: #64748b; margin-top: 2px;">${ev.actor} · ${ev.timestamp}</div>
+            <div class="roadmap-step completed" data-audit-action="${ev.action}" data-clickable="true" style="margin-bottom: 24px;">
+              <div class="roadmap-node" style="background: var(--cca-green); border-color: var(--cca-green);">✓</div>
+              <div style="padding-left: 12px; margin-top: -2px;">
+                <div style="font-size: 14px; font-weight: 600; color: var(--cca-text-primary); margin-bottom: 4px;">${ev.action}</div>
+                <div style="font-size: 13px; color: var(--cca-text-secondary); line-height: 1.5; margin-bottom: 6px;">${ev.summary}</div>
+                <div style="font-size: 11px; font-weight: 600; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">${ev.actor} · ${ev.timestamp}</div>
+              </div>
             </div>
           `).join('')}
         </div>
@@ -2246,189 +2308,221 @@ document.addEventListener('DOMContentLoaded', () => {
       const latestInstruction = state.patientArtifacts.find(a => a.type === 'PATIENT_INSTRUCTION');
 
       html = `
-        <div class="card-header" style="margin-bottom: 8px;">
-          <div>
-            <div class="card-title" style="font-size: 15px;">Good morning, Ananya</div>
-            <div class="card-subtitle">Cycle 3 of 6 · Recovery & Nadir Monitoring</div>
-          </div>
-          <span class="status-pill verified">Day 8 Nadir</span>
+        <!-- 3. GREETING / EPISODE CONTEXT -->
+        <div style="margin-bottom: var(--space-6); padding-top: var(--space-2);">
+          <div style="font-size: 22px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 4px; letter-spacing: -0.4px;">Good morning, Ananya</div>
+          <div style="font-size: 14px; color: var(--cca-text-secondary);">Breast cancer · Adjuvant treatment</div>
+          <div style="font-size: 14px; color: var(--cca-text-secondary); font-weight: 500;">Cycle 3 of 6</div>
         </div>
 
-        <!-- P1-06: Plan Change Notification -->
-        ${(state.cancerEpisode.activePlanVersion || 1) > 1 ? `
-        <div class="card glow-patient" style="border-left: 4px solid #4f46e5; margin-bottom: 12px; cursor: pointer;" id="btnViewPlanChanges" data-clickable="true">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-            <div>
-              <div style="font-size: 13px; font-weight: 700; color: #312e81; margin-bottom: 2px;">⚠️ Care Plan Updated</div>
-              <div style="font-size: 11.5px; color: #334155;">Dr Anjali Menon updated your plan instructions to v${state.cancerEpisode.activePlanVersion}. Review the new guidance.</div>
+        <!-- 4. TODAY (Dominant Action) -->
+        <div style="margin-bottom: var(--space-8);">
+          <div style="font-size: 12px; font-weight: 700; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: var(--space-3);">Today</div>
+          <div class="dominant-action-card" data-clickable="true" id="btnGoNextApt">
+            <div class="dominant-action-title">${nextApt ? nextApt.title : 'Symptom check-in due'}</div>
+            <div class="dominant-action-meta">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+              <span>${nextApt ? 'Tomorrow · 9:30 AM · ' + nextApt.facility : 'How are you feeling today?'}</span>
             </div>
-            <span class="status-pill verified">New</span>
+            <button class="btn-primary-action" id="btnPatientHomeAptView" style="min-height: 44px; font-size: 14px;" data-clickable="true">
+              ${nextApt ? 'View appointment' : 'Check in'}
+            </button>
           </div>
         </div>
-        ` : ''}
 
-        <!-- DOMINANT NEXT ACTION CARD (P02) -->
-        <div class="dominant-action-card glow-patient" data-clickable="true" id="btnGoNextApt">
-          <div class="dominant-action-tag">Next Dominant Step</div>
-          <div class="dominant-action-title">${nextApt ? nextApt.title : 'Pre-Cycle Blood Test'}</div>
-          <div class="dominant-action-meta">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
-            <span>Friday · 9:30 AM · ${nextApt ? nextApt.facility : 'CCA Cancer Centre'}</span>
-          </div>
-          <button class="btn-primary-action" id="btnPatientHomeAptView" style="min-height: 44px; font-size: 14px;" data-clickable="true">
-            View Appointment Details →
-          </button>
-        </div>
-
-        <!-- TODAY'S MEDICINES DUE -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M10.5 20.5l10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
-              Today's Supportive Medicines
-            </div>
-            <span class="card-subtitle">Cycle 3 Nadir Cover</span>
-          </div>
-
-          ${state.medicines.map(m => `
-            <div class="action-item ${m.todayStatus === 'TAKEN' ? 'done' : ''}" data-med-id="${m.id}" data-clickable="true">
-              <div class="action-check-box">
-                ${m.todayStatus === 'TAKEN' ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+        <!-- 5. YOUR DAY -->
+        <div style="margin-bottom: var(--space-8);">
+          <div style="font-size: 12px; font-weight: 700; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: var(--space-3);">Your Day</div>
+          <div style="display:flex; flex-direction:column; gap: var(--space-2);">
+            ${state.medicines.map(m => `
+              <div class="action-item ${m.todayStatus === 'TAKEN' ? 'done' : ''}" style="background:var(--cca-surface-card); border-radius:var(--radius-md); padding:12px; display:flex; gap:12px; align-items:center;" data-med-id="${m.id}" data-clickable="true">
+                <div class="action-check-box" style="width:20px;height:20px;border-radius:50%;border:2px solid ${m.todayStatus === 'TAKEN' ? 'var(--cca-green)' : '#cbd5e1'}; display:flex; align-items:center; justify-content:center; background:${m.todayStatus === 'TAKEN' ? 'var(--cca-green)' : 'transparent'};">
+                  ${m.todayStatus === 'TAKEN' ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+                </div>
+                <div style="flex:1;">
+                  <div style="font-size:14px; font-weight:600; color:var(--cca-text-primary);">${m.name}</div>
+                  <div style="font-size:12px; color:var(--cca-text-secondary);">${m.todayStatus === 'TAKEN' ? 'Taken at 8:04 AM' : 'Due today'}</div>
+                </div>
               </div>
-              <div class="action-content">
-                <div class="action-title">${m.name} (${m.timing})</div>
-                <div class="action-desc">${m.purpose} · ${m.instructions}</div>
+            `).join('')}
+            
+            <div class="action-item" style="background:var(--cca-surface-card); border-radius:var(--radius-md); padding:12px; display:flex; gap:12px; align-items:center;" id="btnShortcutSymptoms" data-clickable="true">
+              <div class="action-check-box" style="width:20px;height:20px;border-radius:50%;border:2px solid #cbd5e1;"></div>
+              <div style="flex:1;">
+                <div style="font-size:14px; font-weight:600; color:var(--cca-text-primary);">Symptom check-in</div>
+                <div style="font-size:12px; color:var(--cca-text-secondary);">Due today</div>
               </div>
-              <span class="status-pill ${m.todayStatus === 'TAKEN' ? 'signed' : 'draft'}">${m.todayStatus}</span>
             </div>
-          `).join('')}
-        </div>
-
-        <!-- LATEST CARE DIRECTIVE FROM DR LIN -->
-        ${latestInstruction ? `
-          <div class="card glow-doctor" id="btnClickDirectiveCard" data-clickable="true">
-            <div class="card-header">
-              <div class="card-title" style="color: #4338ca;">Care Instruction from Dr Anjali Menon</div>
-              <span class="status-pill verified">Just Now</span>
-            </div>
-            <div style="font-size: 12.5px; color: #0f172a; line-height: 1.45;">
-              "${latestInstruction.content.directive}"
+            
+            <div class="action-item" style="background:var(--cca-surface-card); border-radius:var(--radius-md); padding:12px; display:flex; gap:12px; align-items:center;">
+              <div class="action-check-box" style="width:20px;height:20px;border-radius:50%;border:2px solid #cbd5e1;"></div>
+              <div style="flex:1;">
+                <div style="font-size:14px; font-weight:600; color:var(--cca-text-primary);">Hydration</div>
+                <div style="font-size:12px; color:var(--cca-text-secondary);">1.8 / 2.5 L</div>
+              </div>
             </div>
           </div>
-        ` : ''}
-
-        <!-- EXPANDED ONCOLOGY NAVIGATION SHORTCUTS (P03, P04, P05, P09, P10, P11, P13, P15, P16) -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
-          <button class="btn-secondary" id="btnShortcutMyCare" data-clickable="true" style="font-size:12px;">
-            🩺 My Cancer Care (P03)
-          </button>
-          <button class="btn-secondary" id="btnShortcutSymptoms" data-clickable="true" style="font-size:12px;">
-            🌡️ Report Symptoms (P11)
-          </button>
-          <button class="btn-secondary" id="btnShortcutResults" data-clickable="true" style="font-size:12px;">
-            🧪 Lab & Test Results (P13)
-          </button>
-          <button class="btn-secondary" id="btnShortcutApts" data-clickable="true" style="font-size:12px;">
-            📅 Appointments (P04)
-          </button>
-          <button class="btn-secondary" id="btnShortcutPrep" data-clickable="true" style="font-size:12px;">
-            📝 Visit Preparation (P05)
-          </button>
-          <button class="btn-secondary" id="btnShortcutTreatmentDay" data-clickable="true" style="font-size:12px;">
-            🏥 Treatment Day Guide (P10)
-          </button>
-          <button class="btn-secondary" id="btnShortcutMeds" data-clickable="true" style="font-size:12px;">
-            💊 Supportive Medicines (P09)
-          </button>
-          <button class="btn-secondary" id="btnShortcutBilling" data-clickable="true" style="font-size:12px;">
-            💳 Bills & Insurance (P15)
-          </button>
         </div>
 
-        <button class="btn-secondary" id="btnShortcutSurvivorship" data-clickable="true" style="width:100%; font-size:12px; margin-bottom:12px;">
-          🎗️ Treatment Summary & Survivorship Plan (P16) →
-        </button>
+        <!-- 6. YOUR TREATMENT -->
+        <div style="margin-bottom: var(--space-8);">
+          <div style="font-size: 12px; font-weight: 700; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: var(--space-3);">Your Treatment</div>
+          <div style="background:var(--cca-surface-card); border-radius:var(--radius-md); padding:var(--space-4);">
+            <div style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-2);">Cycle 3 of 6</div>
+            
+            <div class="cycle-steps-bar" style="margin-bottom: 12px;">
+              <div class="cycle-bar-segment completed"></div>
+              <div class="cycle-bar-segment completed"></div>
+              <div class="cycle-bar-segment active" style="background: linear-gradient(90deg, #4f46e5, #818cf8);"></div>
+              <div class="cycle-bar-segment"></div>
+              <div class="cycle-bar-segment"></div>
+              <div class="cycle-bar-segment"></div>
+            </div>
+            
+            <div style="display:flex; justify-content:space-between; margin-bottom: var(--space-3);">
+              <div>
+                <div style="font-size: 11px; color: var(--cca-text-secondary); text-transform:uppercase;">Current</div>
+                <div style="font-size: 13px; font-weight: 600;">Cycle 3 · Recovery</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size: 11px; color: var(--cca-text-secondary); text-transform:uppercase;">Next</div>
+                <div style="font-size: 13px; font-weight: 600;">Blood test · 16 Sep</div>
+              </div>
+            </div>
+            
+            <div id="btnShortcutMyCare" style="font-size: 13px; color: var(--cca-accent-patient); font-weight: 600; cursor:pointer;" data-clickable="true">View treatment plan →</div>
+          </div>
+        </div>
 
-        <!-- PERSISTENT URGENT HELP BUTTON -->
-        <button class="btn-primary-action" id="btnGoUrgentHelp" data-clickable="true" style="background: linear-gradient(135deg, #e11d48, #be123c); min-height: 48px; font-size: 14.5px;">
-          🚨 24/7 Cancer Emergency & Triage Hotline
-        </button>
+        <!-- 7. CURRENT INSTRUCTIONS -->
+        <div style="margin-bottom: var(--space-8);">
+          <div style="font-size: 12px; font-weight: 700; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: var(--space-3);">Current Instructions</div>
+          ${latestInstruction ? `
+            <div style="background:var(--cca-surface-card); border-radius:var(--radius-md); padding:var(--space-4);" id="btnClickDirectiveCard" data-clickable="true">
+              <div style="font-size:12px; color:var(--cca-text-secondary); margin-bottom:8px;">From Dr Anjali Menon · Updated today</div>
+              <div style="font-size: 14.5px; color: var(--cca-text-primary); line-height: 1.5; margin-bottom: 12px;">
+                "${latestInstruction.content.directive}"
+              </div>
+              <div style="font-size: 13px; color: var(--cca-accent-patient); font-weight: 600; cursor:pointer;">View all instructions →</div>
+            </div>
+          ` : `
+            <div style="background:var(--cca-surface-card); border-radius:var(--radius-md); padding:var(--space-4); font-size:14px; color:var(--cca-text-secondary);">
+              No active instructions at this time.
+            </div>
+          `}
+        </div>
+
+        <!-- 8. UPDATES -->
+        <div style="margin-bottom: var(--space-8);">
+          <div style="font-size: 12px; font-weight: 700; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: var(--space-3);">Updates</div>
+          <div style="display:flex; flex-direction:column; gap: var(--space-4);">
+            ${(state.cancerEpisode.activePlanVersion || 1) > 1 ? `
+            <div style="display:flex; gap:12px; cursor:pointer;" id="btnViewPlanChanges" data-clickable="true">
+              <div style="width:8px; height:8px; border-radius:50%; background:var(--cca-accent-doctor); margin-top:6px; flex-shrink:0;"></div>
+              <div>
+                <div style="font-size:13.5px; font-weight:600; color:var(--cca-text-primary);">CARE PLAN UPDATED</div>
+                <div style="font-size:12.5px; color:var(--cca-text-secondary); margin-top:2px;">Your treatment plan was changed to v${state.cancerEpisode.activePlanVersion}</div>
+              </div>
+            </div>
+            ` : ''}
+            
+            ${releasedRes.length > 0 ? `
+            <div style="display:flex; gap:12px; cursor:pointer;" id="btnShortcutResults" data-clickable="true">
+              <div style="width:8px; height:8px; border-radius:50%; background:var(--cca-green); margin-top:6px; flex-shrink:0;"></div>
+              <div>
+                <div style="font-size:13.5px; font-weight:600; color:var(--cca-text-primary);">NEW RESULT</div>
+                <div style="font-size:12.5px; color:var(--cca-text-secondary); margin-top:2px;">${releasedRes[0].title} reviewed</div>
+              </div>
+            </div>
+            ` : ''}
+            
+            <div style="display:flex; gap:12px;">
+              <div style="width:8px; height:8px; border-radius:50%; background:#94a3b8; margin-top:6px; flex-shrink:0;"></div>
+              <div>
+                <div style="font-size:13.5px; font-weight:600; color:var(--cca-text-primary);">SYMPTOM REVIEWED</div>
+                <div style="font-size:12.5px; color:var(--cca-text-secondary); margin-top:2px;">Priya Rao reviewed your report</div>
+              </div>
+            </div>
+            
+            <div style="display:flex; gap:12px;">
+              <div style="width:8px; height:8px; border-radius:50%; background:#94a3b8; margin-top:6px; flex-shrink:0;"></div>
+              <div>
+                <div style="font-size:13.5px; font-weight:600; color:var(--cca-text-primary);">NEW MESSAGE</div>
+                <div style="font-size:12.5px; color:var(--cca-text-secondary); margin-top:2px;">Dr Anjali Menon replied to your question.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 9. YOUR CARE TEAM -->
+        <div style="margin-bottom: var(--space-8);">
+          <div style="font-size: 12px; font-weight: 700; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: var(--space-3);">Your Care Team</div>
+          <div style="background:var(--cca-surface-card); border-radius:var(--radius-md); padding:var(--space-4);">
+            <div style="display:flex; gap:12px; margin-bottom:12px; align-items:center;">
+              <div style="width:36px; height:36px; border-radius:50%; background:#f1f5f9; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:12px; color:#64748b;">AM</div>
+              <div>
+                <div style="font-size:14px; font-weight:600;">Dr Anjali Menon</div>
+                <div style="font-size:12px; color:var(--cca-text-secondary);">Medical Oncologist</div>
+              </div>
+            </div>
+            <div style="display:flex; gap:12px; margin-bottom:16px; align-items:center;">
+              <div style="width:36px; height:36px; border-radius:50%; background:#f1f5f9; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:12px; color:#64748b;">PR</div>
+              <div>
+                <div style="font-size:14px; font-weight:600;">Priya Rao</div>
+                <div style="font-size:12px; color:var(--cca-text-secondary);">Nurse Navigator</div>
+              </div>
+            </div>
+            <div style="font-size: 13px; color: var(--cca-accent-patient); font-weight: 600; cursor:pointer;" id="btnShortcutMessages" data-clickable="true">Contact care team →</div>
+          </div>
+        </div>
+
+        <!-- 10. URGENT HELP -->
+        <div style="margin-bottom: var(--space-10);">
+          <div id="btnGoUrgentHelp" style="font-size: 13.5px; font-weight: 600; color: var(--cca-destructive); cursor:pointer; padding: 12px 0;" data-clickable="true">Urgent symptoms & help →</div>
+        </div>
       `;
     } else if (screenName === 'MyCare') {
       // P03: My Cancer Care (Dedicated Disease Hub)
       html = `
-        <div class="card-header" style="margin-bottom: 8px;">
-          <div class="card-title">My Cancer Care · Disease Overview</div>
-          <span class="status-pill signed">Stage IIA IDC</span>
+        <div style="margin-bottom: var(--space-6); padding-top: var(--space-2);">
+          <div style="font-size: 22px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 4px; letter-spacing: -0.4px;">My Care</div>
+          <div style="font-size: 14px; color: var(--cca-text-secondary);">Breast cancer · Adjuvant treatment</div>
+          <div style="font-size: 14px; color: var(--cca-text-secondary); font-weight: 500;">Cycle 3 of 6</div>
         </div>
 
-        <div class="card glow-patient" style="margin-bottom: 10px;">
-          <div style="font-size: 14px; font-weight: 800; color: #0f172a; margin-bottom: 2px;">${state.cancerEpisode.diagnosis}</div>
-          <div style="font-size: 11.5px; color: #0369a1; margin-bottom: 8px;">Invasive Ductal Carcinoma · Nottingham Grade 2 (Score 6/9)</div>
-          
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 10px;">
-            <div style="font-size: 11px; font-weight: 700; color: #4338ca; text-transform: uppercase; margin-bottom: 6px;">Receptor Profile & Biomarkers:</div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 11.5px;">
-              <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 6px; border-radius: 4px;">
-                <span style="color:#94a3b8;">Estrogen (ER):</span> <strong style="color:#34d399;">90% (+)</strong>
-              </div>
-              <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 6px; border-radius: 4px;">
-                <span style="color:#94a3b8;">Progesterone (PR):</span> <strong style="color:#34d399;">70% (+)</strong>
-              </div>
-              <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 6px; border-radius: 4px;">
-                <span style="color:#94a3b8;">HER2/neu:</span> <strong style="color:#0369a1;">1+ (Neg)</strong>
-              </div>
-              <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 6px; border-radius: 4px;">
-                <span style="color:#fbbf24;">Ki-67 Index:</span> <strong style="color:#fbbf24;">32% (High)</strong>
-              </div>
-            </div>
+        <div style="display: flex; flex-direction: column; gap: var(--space-2); margin-bottom: var(--space-10);">
+          <div class="action-item" style="background:var(--cca-surface-card); border-radius:var(--radius-md); padding:16px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;" id="btnGoRoadmapFromMyCare" data-clickable="true">
+            <span style="font-size:15px; font-weight:600; color:var(--cca-text-primary);">Treatment</span>
+            <span style="color:var(--cca-text-secondary);">→</span>
           </div>
-
-          <div style="font-size: 12px; color: #334155; line-height: 1.5; margin-bottom: 8px;">
-            <strong>Active Systemic Regimen:</strong> ${state.cancerEpisode.activeRegimen}<br/>
-            <strong>Current Phase:</strong> Cycle 3 of 6 (Day 8 Physiological Nadir Recovery)
+          <div class="action-item" style="background:var(--cca-surface-card); border-radius:var(--radius-md); padding:16px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;" id="btnShortcutApts" data-clickable="true">
+            <span style="font-size:15px; font-weight:600; color:var(--cca-text-primary);">Appointments</span>
+            <span style="color:var(--cca-text-secondary);">→</span>
           </div>
-        </div>
-
-        <!-- CARE TEAM DIRECTORY -->
-        <div class="card glow-patient" style="margin-bottom: 10px;">
-          <div class="card-header">
-            <div class="card-title" style="font-size: 13px;">My Dedicated Care Team</div>
-            <span class="status-pill verified">CCA Oncology</span>
+          <div class="action-item" style="background:var(--cca-surface-card); border-radius:var(--radius-md); padding:16px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;" id="btnShortcutMeds" data-clickable="true">
+            <span style="font-size:15px; font-weight:600; color:var(--cca-text-primary);">Medicines</span>
+            <span style="color:var(--cca-text-secondary);">→</span>
           </div>
-
-          <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px;">
-              <div>
-                <strong style="color:#0f172a;">Dr Anjali Menon</strong><br/>
-                <span style="font-size: 11px; color: #94a3b8;">Treating Medical Oncologist · MD, DM</span>
-              </div>
-              <button class="btn-secondary btnCareTeamMsg" id="btnMsgDrMenon" data-name="Dr Anjali Menon" data-clickable="true" style="padding: 4px 8px; font-size: 11px;">Message</button>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px;">
-              <div>
-                <strong style="color:#0f172a;">Priya Rao, RN</strong><br/>
-                <span style="font-size: 11px; color: #94a3b8;">Breast Oncology Nurse Navigator</span>
-              </div>
-              <button class="btn-secondary btnCareTeamMsg" id="btnMsgNursePriya" data-name="Nurse Priya Rao" data-clickable="true" style="padding: 4px 8px; font-size: 11px;">Message</button>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <div>
-                <strong style="color:#0f172a;">Dr Ramesh Kulkarni</strong><br/>
-                <span style="font-size: 11px; color: #94a3b8;">Primary Breast Oncosurgeon · MS, MCh</span>
-              </div>
-              <span class="status-pill signed" style="font-size: 10px;">Clear Margins</span>
-            </div>
+          <div class="action-item" style="background:var(--cca-surface-card); border-radius:var(--radius-md); padding:16px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;" id="btnClickDirectiveCard" data-clickable="true">
+            <span style="font-size:15px; font-weight:600; color:var(--cca-text-primary);">Current Instructions</span>
+            <span style="color:var(--cca-text-secondary);">→</span>
           </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-          <button class="btn-secondary" id="btnGoRoadmapFromMyCare" data-clickable="true" style="font-size: 12px;">
-            View Milestones (P08) →
-          </button>
-          <button class="btn-secondary" id="btnGoTreatmentDayFromMyCare" data-clickable="true" style="font-size: 12px;">
-            Day Suite Guide (P10) →
-          </button>
+          <div class="action-item" style="background:var(--cca-surface-card); border-radius:var(--radius-md); padding:16px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;" id="btnShortcutSymptoms" data-clickable="true">
+            <span style="font-size:15px; font-weight:600; color:var(--cca-text-primary);">Symptoms</span>
+            <span style="color:var(--cca-text-secondary);">→</span>
+          </div>
+          <div class="action-item" style="background:var(--cca-surface-card); border-radius:var(--radius-md); padding:16px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;" id="btnShortcutResults" data-clickable="true">
+            <span style="font-size:15px; font-weight:600; color:var(--cca-text-primary);">Results</span>
+            <span style="color:var(--cca-text-secondary);">→</span>
+          </div>
+          <div class="action-item" style="background:var(--cca-surface-card); border-radius:var(--radius-md); padding:16px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;" id="btnShortcutDocuments" data-clickable="true">
+            <span style="font-size:15px; font-weight:600; color:var(--cca-text-primary);">Documents</span>
+            <span style="color:var(--cca-text-secondary);">→</span>
+          </div>
+          <div class="action-item" style="background:var(--cca-surface-card); border-radius:var(--radius-md); padding:16px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;" id="btnShortcutSurvivorship" data-clickable="true">
+            <span style="font-size:15px; font-weight:600; color:var(--cca-text-primary);">Treatment Summary</span>
+            <span style="color:var(--cca-text-secondary);">→</span>
+          </div>
         </div>
       `;
     } else if (screenName === 'VisitPreparation') {
@@ -2675,27 +2769,27 @@ document.addEventListener('DOMContentLoaded', () => {
       // P08: My Care / Roadmap
       const activePlanVer = state.cancerEpisode.activePlanVersion || 1;
       html = `
-        <div class="card-header" style="margin-bottom: 8px;">
-          <div class="card-title">Treatment Journey & Milestones</div>
-          <span class="status-pill signed">Active Plan v${activePlanVer}</span>
+        <div style="margin-bottom: var(--space-6); padding-top: var(--space-2);">
+          <div style="font-size: 24px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 4px; letter-spacing: -0.5px;">Care Roadmap</div>
+          <div style="font-size: 14px; color: var(--cca-text-secondary);">Your treatment journey and milestones</div>
         </div>
 
-        <div class="card glow-patient" style="margin-bottom:10px;">
-          <div style="font-size: 13.5px; font-weight:800; color:#0f172a; margin-bottom:2px;">${state.cancerEpisode.diagnosis}</div>
-          <div style="font-size: 11.5px; color:#0369a1; margin-bottom:8px;">${state.staging.overallStage} · Regimen: ${state.cancerEpisode.activeRegimen}</div>
-          <div style="font-size: 11.5px; color:#334155; line-height:1.45;">
-            Treating Oncologist: <strong>Dr Anjali Menon</strong><br/>
-            Nurse Navigator: <strong>Priya Rao</strong> · CCA Cancer Centre
+        <div class="action-item" style="margin-bottom: var(--space-6);">
+          <div style="font-size: 14px; font-weight:800; color:var(--cca-text-primary); margin-bottom:4px;">${state.cancerEpisode.diagnosis}</div>
+          <div style="font-size: 12px; color:var(--cca-accent-patient); margin-bottom:10px;">${state.staging.overallStage} · Regimen: ${state.cancerEpisode.activeRegimen}</div>
+          <div style="font-size: 12px; color:var(--cca-text-secondary); line-height:1.5;">
+            Treating Oncologist: <strong style="color:var(--cca-text-primary);">Dr Anjali Menon</strong><br/>
+            Nurse Navigator: <strong style="color:var(--cca-text-primary);">Priya Rao</strong> · CCA Cancer Centre
           </div>
         </div>
 
         <!-- P1-05: Authoritative Current Instructions -->
-        <div class="card" style="border-left: 4px solid #4f46e5; margin-bottom: 10px; background: rgba(79, 70, 229, 0.03);">
-          <div class="card-header" style="margin-bottom: 4px;">
-            <div class="card-title" style="color: #4f46e5; font-size: 13px;">Current Care Instructions</div>
-            <span class="status-pill signed">From Dr Menon</span>
+        <div class="action-item" style="margin-bottom: var(--space-6); border-left: 4px solid var(--cca-accent-patient); background: var(--cca-surface-main);">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 8px;">
+            <div style="font-size: 13.5px; font-weight: 700; color: var(--cca-accent-patient);">Active Instructions</div>
+            <div style="font-size: 11px; font-weight: 700; color: var(--cca-green); background: var(--cca-green-light); padding: 4px 8px; border-radius: 12px;">Dr Menon</div>
           </div>
-          <div style="font-size: 12px; color: #1e293b; line-height: 1.6;">
+          <div style="font-size: 13px; color: var(--cca-text-primary); line-height: 1.5;">
             Drink 2.5L of water daily.<br/>
             ${(() => {
               const cp = state.treatmentPlans.find(p => p.status === 'SIGNED');
@@ -2704,36 +2798,34 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
 
-        <div class="card glow-patient">
-          <div style="font-size: 12px; font-weight:700; color:#4338ca; text-transform:uppercase; margin-bottom: 10px;">
-            Treatment Journey Milestones:
-          </div>
+        <div style="margin-bottom: var(--space-8);">
+          <div style="font-size: 13px; font-weight: 700; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Milestones</div>
 
-          <div class="roadmap-timeline">
-            <div class="roadmap-step completed" data-clickable="true">
-              <div class="roadmap-node">✓</div>
-              <div class="roadmap-step-title">1. Surgical Removal & SLNB</div>
-              <div class="roadmap-step-desc">Completed July 2 · Clear margins achieved</div>
+          <div class="roadmap-timeline" style="background: var(--cca-surface-card); border: 1px solid var(--cca-border-subtle); padding: 16px; border-radius: var(--radius-lg);">
+            <div class="roadmap-step completed" data-clickable="true" style="margin-bottom: 16px;">
+              <div class="roadmap-node" style="background: var(--cca-green); color: white; border-color: var(--cca-green);">✓</div>
+              <div class="roadmap-step-title" style="font-size: 13.5px; font-weight: 600; color: var(--cca-text-primary);">1. Surgical Removal & SLNB</div>
+              <div class="roadmap-step-desc" style="font-size: 12px; color: var(--cca-text-secondary);">Completed July 2 · Clear margins achieved</div>
             </div>
-            <div class="roadmap-step completed" data-clickable="true">
-              <div class="roadmap-node">✓</div>
-              <div class="roadmap-step-title">2. Chemotherapy Cycle 1 & 2</div>
-              <div class="roadmap-step-desc">Completed with good tolerance</div>
+            <div class="roadmap-step completed" data-clickable="true" style="margin-bottom: 16px;">
+              <div class="roadmap-node" style="background: var(--cca-green); color: white; border-color: var(--cca-green);">✓</div>
+              <div class="roadmap-step-title" style="font-size: 13.5px; font-weight: 600; color: var(--cca-text-primary);">2. Chemotherapy Cycle 1 & 2</div>
+              <div class="roadmap-step-desc" style="font-size: 12px; color: var(--cca-text-secondary);">Completed with good tolerance</div>
             </div>
-            <div class="roadmap-step active" data-clickable="true">
-              <div class="roadmap-node">●</div>
-              <div class="roadmap-step-title">3. Chemotherapy Cycle 3 (Current)</div>
-              <div class="roadmap-step-desc">Day 8 physiological nadir recovery period</div>
+            <div class="roadmap-step active" data-clickable="true" style="margin-bottom: 16px;">
+              <div class="roadmap-node" style="background: var(--cca-accent-patient); color: white; border-color: var(--cca-accent-patient);">●</div>
+              <div class="roadmap-step-title" style="font-size: 14px; font-weight: 700; color: var(--cca-accent-patient);">3. Chemotherapy Cycle 3 (Current)</div>
+              <div class="roadmap-step-desc" style="font-size: 12.5px; color: var(--cca-text-primary);">Day 8 physiological nadir recovery period</div>
+            </div>
+            <div class="roadmap-step" data-clickable="true" style="margin-bottom: 16px;">
+              <div class="roadmap-node" style="background: transparent; color: var(--cca-text-secondary); border-color: var(--cca-border-subtle);">○</div>
+              <div class="roadmap-step-title" style="font-size: 13px; font-weight: 500; color: var(--cca-text-secondary);">4. Chemotherapy Cycles 4, 5 & 6</div>
+              <div class="roadmap-step-desc" style="font-size: 12px; color: var(--cca-text-tertiary);">Scheduled through September 2026</div>
             </div>
             <div class="roadmap-step" data-clickable="true">
-              <div class="roadmap-node">○</div>
-              <div class="roadmap-step-title">4. Chemotherapy Cycles 4, 5 & 6</div>
-              <div class="roadmap-step-desc">Scheduled through September 2026</div>
-            </div>
-            <div class="roadmap-step" data-clickable="true">
-              <div class="roadmap-node">○</div>
-              <div class="roadmap-step-title">5. Hormone Maintenance Therapy</div>
-              <div class="roadmap-step-desc">Oral Letrozole x 5 years post-chemotherapy</div>
+              <div class="roadmap-node" style="background: transparent; color: var(--cca-text-secondary); border-color: var(--cca-border-subtle);">○</div>
+              <div class="roadmap-step-title" style="font-size: 13px; font-weight: 500; color: var(--cca-text-secondary);">5. Hormone Maintenance Therapy</div>
+              <div class="roadmap-step-desc" style="font-size: 12px; color: var(--cca-text-tertiary);">Oral Letrozole x 5 years post-chemotherapy</div>
             </div>
           </div>
         </div>
@@ -2753,55 +2845,55 @@ document.addEventListener('DOMContentLoaded', () => {
         ];
 
         html = `
-          <div class="card-header" style="margin-bottom: 8px;">
-            <div class="card-title">Report a Symptom</div>
-            <span class="status-pill verified">Step 1 of 4</span>
+          <div style="margin-bottom: var(--space-6); padding-top: var(--space-2);">
+            <div style="font-size: 22px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 4px; letter-spacing: -0.4px;">Report a Symptom</div>
+            <div style="font-size: 14px; color: var(--cca-text-secondary);">Step 1 of 4</div>
           </div>
 
-          <div class="wizard-progress-bar">
+          <div class="wizard-progress-bar" style="margin-bottom: 24px;">
             <div class="wizard-progress-seg active"></div>
             <div class="wizard-progress-seg"></div>
             <div class="wizard-progress-seg"></div>
             <div class="wizard-progress-seg"></div>
           </div>
 
-          <div class="card glow-patient">
-            <div style="font-size: 14.5px; font-weight: 800; color: #0f172a; margin-bottom: 4px;">How are you feeling?</div>
-            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 16px;">Select the primary symptom you are experiencing today:</div>
+          <div style="margin-bottom: var(--space-8);">
+            <div style="font-size: 16px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 4px;">How are you feeling?</div>
+            <div style="font-size: 13px; color: var(--cca-text-secondary); margin-bottom: 16px;">Select the primary symptom you are experiencing today:</div>
 
-            <div class="wizard-choice-grid">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 24px;">
               ${categories.map(c => `
-                <button class="wizard-choice-btn ${wiz.category === c.id ? 'selected' : ''}" data-cat="${c.id}" data-clickable="true">
+                <button class="wizard-choice-btn ${wiz.category === c.id ? 'selected' : ''}" data-cat="${c.id}" data-clickable="true" style="padding: 14px; border-radius: var(--radius-md); border: 2px solid ${wiz.category === c.id ? 'var(--cca-accent-patient)' : 'var(--cca-border-subtle)'}; background: var(--cca-surface-card); text-align: left; font-size: 13.5px; font-weight: 600; color: var(--cca-text-primary); transition: all 0.15s;">
                   ${c.label}
                 </button>
               `).join('')}
             </div>
 
-            <button class="btn-primary-action" id="btnWizNext1" data-clickable="true">
-              Continue to Severity →
+            <button class="btn-primary-action" id="btnWizNext1" data-clickable="true" style="width: 100%;">
+              Continue →
             </button>
           </div>
         `;
       } else if (wiz.step === 2) {
         html = `
-          <div class="card-header" style="margin-bottom: 8px;">
-            <div class="card-title">Report a Symptom</div>
-            <span class="status-pill verified">Step 2 of 4</span>
+          <div style="margin-bottom: var(--space-6); padding-top: var(--space-2);">
+            <div style="font-size: 22px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 4px; letter-spacing: -0.4px;">Report a Symptom</div>
+            <div style="font-size: 14px; color: var(--cca-text-secondary);">Step 2 of 4</div>
           </div>
 
-          <div class="wizard-progress-bar">
+          <div class="wizard-progress-bar" style="margin-bottom: 24px;">
             <div class="wizard-progress-seg active"></div>
             <div class="wizard-progress-seg active"></div>
             <div class="wizard-progress-seg"></div>
             <div class="wizard-progress-seg"></div>
           </div>
 
-          <div class="card glow-patient">
-            <div style="font-size: 14.5px; font-weight: 800; color: #0f172a; margin-bottom: 4px;">How severe is the ${wiz.category}?</div>
-            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 14px;">Choose the level that best describes your sensation:</div>
+          <div style="margin-bottom: var(--space-8);">
+            <div style="font-size: 16px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 4px;">How severe is the ${wiz.category}?</div>
+            <div style="font-size: 13px; color: var(--cca-text-secondary); margin-bottom: 16px;">Choose the level that best describes your sensation:</div>
 
             ${wiz.category === 'Temperature' ? `
-              <div class="temp-control-card">
+              <div class="temp-control-card" style="background:var(--cca-surface-card); border-radius:var(--radius-lg); padding:16px; border:1px solid var(--cca-border-subtle); margin-bottom:20px;">
                 <div class="temp-label">Current Oral Reading</div>
                 <div class="temp-stepper-row">
                   <button class="stepper-btn" id="btnTempMinus" data-clickable="true" aria-label="Decrease temperature">−</button>
@@ -2831,13 +2923,13 @@ document.addEventListener('DOMContentLoaded', () => {
             ` : ''}
 
             ${wiz.category === 'Pain' ? `
-              <div style="margin-bottom: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border: 1px solid #e2e8f0; border-radius: 14px; padding: 14px;">
+              <div style="margin-bottom: 20px; background: var(--cca-surface-card); border: 1px solid var(--cca-border-subtle); border-radius: var(--radius-lg); padding: 16px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-                  <span style="font-size:13px; font-weight:600; color:#0f172a;">⚡ Continuous Pain Scale</span>
-                  <span style="font-size:16px; font-weight:800; color:#0369a1;">${wiz.painScore || 6} / 10</span>
+                  <span style="font-size:13.5px; font-weight:600; color:var(--cca-text-primary);">⚡ Continuous Pain Scale</span>
+                  <span style="font-size:16px; font-weight:800; color:var(--cca-accent-patient);">${wiz.painScore || 6} / 10</span>
                 </div>
-                <input type="range" min="0" max="10" value="${wiz.painScore || 6}" id="painRangeInput" style="width:100%; accent-color:#0284c7; cursor:pointer;" data-clickable="true" />
-                <div style="display:flex; justify-content:space-between; font-size:11px; color:#64748b; margin-top:4px;">
+                <input type="range" min="0" max="10" value="${wiz.painScore || 6}" id="painRangeInput" style="width:100%; accent-color:var(--cca-accent-patient); cursor:pointer;" data-clickable="true" />
+                <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--cca-text-secondary); margin-top:4px;">
                   <span>0 (No Pain)</span>
                   <span>5 (Moderate)</span>
                   <span>10 (Worst Possible)</span>
@@ -2845,10 +2937,10 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
             ` : ''}
 
-            <div class="wizard-severity-row">
-              <button class="wizard-severity-btn ${wiz.severity === 'Mild' ? 'selected' : ''}" data-sev="Mild" data-clickable="true">Mild</button>
-              <button class="wizard-severity-btn ${wiz.severity === 'Moderate' ? 'selected' : ''}" data-sev="Moderate" data-clickable="true">Moderate</button>
-              <button class="wizard-severity-btn severe ${wiz.severity === 'Severe' ? 'selected' : ''}" data-sev="Severe" data-clickable="true">Severe</button>
+            <div class="wizard-severity-row" style="margin-bottom:24px;">
+              <button class="wizard-severity-btn ${wiz.severity === 'Mild' ? 'selected' : ''}" data-sev="Mild" data-clickable="true" style="border-radius:var(--radius-md); border:1px solid var(--cca-border-subtle); background:var(--cca-surface-card);">Mild</button>
+              <button class="wizard-severity-btn ${wiz.severity === 'Moderate' ? 'selected' : ''}" data-sev="Moderate" data-clickable="true" style="border-radius:var(--radius-md); border:1px solid var(--cca-border-subtle); background:var(--cca-surface-card);">Moderate</button>
+              <button class="wizard-severity-btn severe ${wiz.severity === 'Severe' ? 'selected' : ''}" data-sev="Severe" data-clickable="true" style="border-radius:var(--radius-md); border:1px solid var(--cca-border-subtle); background:var(--cca-surface-card);">Severe</button>
             </div>
 
             <div style="display:flex; gap: 8px;">
@@ -2859,33 +2951,33 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
       } else if (wiz.step === 3) {
         html = `
-          <div class="card-header" style="margin-bottom: 8px;">
-            <div class="card-title">Report a Symptom</div>
-            <span class="status-pill verified">Step 3 of 4</span>
+          <div style="margin-bottom: var(--space-6); padding-top: var(--space-2);">
+            <div style="font-size: 22px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 4px; letter-spacing: -0.4px;">Report a Symptom</div>
+            <div style="font-size: 14px; color: var(--cca-text-secondary);">Step 3 of 4</div>
           </div>
 
-          <div class="wizard-progress-bar">
+          <div class="wizard-progress-bar" style="margin-bottom: 24px;">
             <div class="wizard-progress-seg active"></div>
             <div class="wizard-progress-seg active"></div>
             <div class="wizard-progress-seg active"></div>
             <div class="wizard-progress-seg"></div>
           </div>
 
-          <div class="card glow-patient">
-            <div style="font-size: 14.5px; font-weight: 800; color: #0f172a; margin-bottom: 4px;">When did this start?</div>
-            <div style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">Timeline helps Dr Anjali Menon evaluate treatment patterns.</div>
+          <div style="margin-bottom: var(--space-8);">
+            <div style="font-size: 16px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 4px;">When did this start?</div>
+            <div style="font-size: 13px; color: var(--cca-text-secondary); margin-bottom: 16px;">Timeline helps your team evaluate patterns.</div>
 
-            <div class="wizard-choice-grid" style="grid-template-columns:1fr 1fr 1fr; margin-bottom:14px;">
-              <button class="wizard-choice-btn ${wiz.onset === 'Today' ? 'selected' : ''}" data-onset="Today" data-clickable="true">Today</button>
-              <button class="wizard-choice-btn ${wiz.onset === 'Yesterday' ? 'selected' : ''}" data-onset="Yesterday" data-clickable="true">Yesterday</button>
-              <button class="wizard-choice-btn ${wiz.onset === 'A few days ago' ? 'selected' : ''}" data-onset="A few days ago" data-clickable="true">2-3 Days</button>
+            <div class="wizard-choice-grid" style="grid-template-columns:1fr 1fr 1fr; margin-bottom:20px; gap:8px;">
+              <button class="wizard-choice-btn ${wiz.onset === 'Today' ? 'selected' : ''}" data-onset="Today" data-clickable="true" style="border-radius:var(--radius-md); border:1px solid var(--cca-border-subtle); background:var(--cca-surface-card); font-size:13px;">Today</button>
+              <button class="wizard-choice-btn ${wiz.onset === 'Yesterday' ? 'selected' : ''}" data-onset="Yesterday" data-clickable="true" style="border-radius:var(--radius-md); border:1px solid var(--cca-border-subtle); background:var(--cca-surface-card); font-size:13px;">Yesterday</button>
+              <button class="wizard-choice-btn ${wiz.onset === 'A few days ago' ? 'selected' : ''}" data-onset="A few days ago" data-clickable="true" style="border-radius:var(--radius-md); border:1px solid var(--cca-border-subtle); background:var(--cca-surface-card); font-size:13px;">2-3 Days</button>
             </div>
 
-            <div style="font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 6px;">Is it getting:</div>
-            <div class="wizard-choice-grid" style="grid-template-columns:1fr 1fr 1fr; margin-bottom:14px;">
-              <button class="wizard-choice-btn ${wiz.progression === 'Getting better' ? 'selected' : ''}" data-prog="Getting better" data-clickable="true">Better</button>
-              <button class="wizard-choice-btn ${wiz.progression === 'About the same' ? 'selected' : ''}" data-prog="About the same" data-clickable="true">Same</button>
-              <button class="wizard-choice-btn ${wiz.progression === 'Getting worse' ? 'selected' : ''}" data-prog="Getting worse" data-clickable="true">Worse</button>
+            <div style="font-size: 13px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 8px;">Is it getting:</div>
+            <div class="wizard-choice-grid" style="grid-template-columns:1fr 1fr 1fr; margin-bottom:24px; gap:8px;">
+              <button class="wizard-choice-btn ${wiz.progression === 'Getting better' ? 'selected' : ''}" data-prog="Getting better" data-clickable="true" style="border-radius:var(--radius-md); border:1px solid var(--cca-border-subtle); background:var(--cca-surface-card); font-size:13px;">Better</button>
+              <button class="wizard-choice-btn ${wiz.progression === 'About the same' ? 'selected' : ''}" data-prog="About the same" data-clickable="true" style="border-radius:var(--radius-md); border:1px solid var(--cca-border-subtle); background:var(--cca-surface-card); font-size:13px;">Same</button>
+              <button class="wizard-choice-btn ${wiz.progression === 'Getting worse' ? 'selected' : ''}" data-prog="Getting worse" data-clickable="true" style="border-radius:var(--radius-md); border:1px solid var(--cca-border-subtle); background:var(--cca-surface-card); font-size:13px;">Worse</button>
             </div>
 
             <div style="display:flex; gap: 8px;">
@@ -2896,24 +2988,24 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
       } else if (wiz.step === 4) {
         html = `
-          <div class="card-header" style="margin-bottom: 8px;">
-            <div class="card-title">Review & Submit Report</div>
-            <span class="status-pill verified">Step 4 of 4</span>
+          <div style="margin-bottom: var(--space-6); padding-top: var(--space-2);">
+            <div style="font-size: 22px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 4px; letter-spacing: -0.4px;">Review & Submit Report</div>
+            <div style="font-size: 14px; color: var(--cca-text-secondary);">Step 4 of 4</div>
           </div>
 
-          <div class="card glow-patient">
-            <div style="font-size: 14px; font-weight: 800; color: #0f172a; margin-bottom: 10px;">Summary of Your Report:</div>
+          <div style="margin-bottom: var(--space-8);">
+            <div style="font-size: 15px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 12px;">Summary of Your Report:</div>
 
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px; font-size: 12px; line-height: 1.5; color: #1e293b; margin-bottom: 12px;">
+            <div style="background: var(--cca-surface-card); border: 1px solid var(--cca-border-subtle); padding: 16px; border-radius: var(--radius-lg); font-size: 13.5px; line-height: 1.6; color: var(--cca-text-primary); margin-bottom: 20px;">
               • <strong>Symptom:</strong> ${wiz.category}<br/>
-              • <strong>Severity:</strong> <span style="color:${wiz.severity === 'Severe' || wiz.temperature >= 100.4 ? '#f43f5e' : '#38bdf8'}; font-weight:700;">${wiz.severity} (${wiz.temperature ? wiz.temperature + '°F' : ''})</span><br/>
+              • <strong>Severity:</strong> <span style="color:${wiz.severity === 'Severe' || wiz.temperature >= 100.4 ? 'var(--cca-rose)' : 'var(--cca-accent-patient)'}; font-weight:700;">${wiz.severity} (${wiz.temperature ? wiz.temperature + '°F' : ''})</span><br/>
               • <strong>Started:</strong> ${wiz.onset}<br/>
               • <strong>Progression:</strong> ${wiz.progression}
             </div>
 
-            <div style="margin-bottom: 12px;">
-              <label style="font-size: 11.5px; color: #94a3b8; font-weight: 600;">Optional note for Dr Anjali Menon & Nurse Priya:</label>
-              <textarea id="wizNoteInput" rows="2" placeholder="e.g. Mild headache after waking up..." style="width:100%; background:#f8fafc; border:1px solid #e2e8f0; border:1px solid rgba(255,255,255,0.1); color:#0f172a; padding:6px; border-radius:6px; margin-top:4px; font-size:12px;" data-clickable="true"></textarea>
+            <div style="margin-bottom: 24px;">
+              <label style="font-size: 12.5px; color: var(--cca-text-secondary); font-weight: 600;">Optional note for your team:</label>
+              <textarea id="wizNoteInput" rows="3" placeholder="e.g. Mild headache after waking up..." style="width:100%; background:var(--cca-surface-input); border:1px solid var(--cca-border-subtle); color:var(--cca-text-primary); padding:10px; border-radius:var(--radius-md); margin-top:8px; font-size:13.5px;" data-clickable="true"></textarea>
             </div>
 
             <button class="btn-primary-action" id="btnSubmitFinalSymptom" data-clickable="true">
@@ -2924,42 +3016,38 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (wiz.step === 5) {
         const isFever = wiz.temperature >= 100.4 || wiz.severity === 'Severe';
         html = `
-          <div class="card-header" style="margin-bottom: 8px;">
-            <div class="card-title">Check-In Confirmation</div>
-            <span class="status-pill signed">✓ Delivered</span>
+          <div style="text-align: center; margin-top: var(--space-8); margin-bottom: var(--space-8);">
+            <div style="width:64px; height:64px; border-radius:50%; background:var(--cca-green-light); margin:0 auto 16px auto; display:flex; align-items:center; justify-content:center;">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div style="font-size: 22px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 8px; letter-spacing: -0.4px;">Report Submitted</div>
+            <div style="font-size: 14px; color: var(--cca-text-secondary); max-width: 280px; margin: 0 auto;">
+              Thank you. Your care team has been notified and will review your symptom.
+            </div>
           </div>
 
-          <div class="card glow-patient" style="border-left: 4px solid ${isFever ? '#f43f5e' : '#10b981'};">
-            <div style="font-size: 15px; font-weight: 800; color: #0f172a; margin-bottom: 4px;">
-              ✓ Sent to Your Care Team
-            </div>
-            <div style="font-size: 11.5px; color: #94a3b8; margin-bottom: 12px;">
-              Submitted at 9:41 AM · Received by Medical Oncology Service
-            </div>
-
-            ${isFever ? `
-              <div style="background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.35); border-radius: 10px; padding: 12px; margin-bottom: 14px;">
-                <div style="font-size: 12px; font-weight: 800; color: #9f1239; margin-bottom: 4px;">
-                  ⚠️ Your Care Team Has Been Alerted
-                </div>
-                <div style="font-size: 11.5px; color: #9f1239; line-height: 1.45;">
-                  Because your reading (${wiz.temperature}°F) represents potential neutropenic fever on Day 8, Dr Anjali Menon and the triage fellow have received an urgent alert. Stay warm, rest, and keep fluids handy.
-                </div>
+          ${isFever ? `
+            <div style="background: #fff1f2; border: 1px solid #fecdd3; padding: 16px; border-radius: var(--radius-lg); margin-bottom: 24px;">
+              <div style="font-size: 15px; font-weight: 700; color: #be123c; margin-bottom: 8px;">Action Required</div>
+              <div style="font-size: 13.5px; color: #9f1239; line-height: 1.5; margin-bottom: 12px;">
+                Your symptoms require immediate triage. Please call the 24/7 hotline now.
               </div>
-
-              <button class="btn-primary-action" id="btnCallTriageEmergency" style="background:#e11d48; margin-bottom:8px;" data-clickable="true">
-                📞 Call Triage Hotline (1-800-555-CCACARE)
+              <button class="btn-primary-action" id="btnCallTriageEmergency" data-clickable="true" style="background: linear-gradient(135deg, #e11d48, #be123c);">
+                🚨 Call Triage Hotline
               </button>
-            ` : `
-              <div style="font-size: 12px; color: #334155; line-height: 1.45; margin-bottom: 12px;">
-                Your report has been logged in Ananya's active Cancer Episode. We will notify you if Dr Menon issues new instructions.
+            </div>
+          ` : `
+            <div style="background: var(--cca-surface-card); border: 1px solid var(--cca-border-subtle); padding: 16px; border-radius: var(--radius-lg); margin-bottom: 24px;">
+              <div style="font-size: 14px; font-weight: 600; color: var(--cca-text-primary); margin-bottom: 6px;">Next steps</div>
+              <div style="font-size: 13px; color: var(--cca-text-secondary); line-height:1.5;">
+                Nurse Priya Rao usually reviews reports within 2 hours. Monitor your symptoms and call if they worsen.
               </div>
-            `}
+            </div>
+          `}
 
-            <button class="btn-secondary" id="btnWizDone" data-clickable="true" style="width:100%;">
-              Done · Return to Home
-            </button>
-          </div>
+          <button class="btn-secondary" id="btnWizDone" data-clickable="true" style="width:100%; height:48px;">
+            Done · Return to Home
+          </button>
         `;
       }
 
@@ -2972,52 +3060,65 @@ document.addEventListener('DOMContentLoaded', () => {
       const unreleased = state.results.filter(r => r.releaseState === 'UNRELEASED');
 
       html = `
-        <div class="card-header" style="margin-bottom: 8px;">
-          <div class="card-title">My Lab & Test Results</div>
-          <span class="status-pill verified">Care Team Verified</span>
+        <div style="margin-bottom: var(--space-6); padding-top: var(--space-2);">
+          <div style="font-size: 24px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 4px; letter-spacing: -0.5px;">Test Results</div>
+          <div style="font-size: 14px; color: var(--cca-text-secondary);">Your lab and pathology reports</div>
         </div>
 
         <!-- UNRELEASED RESULTS (NO SENSITIVE/ANXIOUS METRICS EXPOSED) -->
-        ${unreleased.map(u => `
-          <div class="card" style="border-left: 4px solid #f59e0b;" data-clickable="true">
-            <div class="card-header">
-              <div class="card-title" style="font-size: 13px;">${u.title}</div>
-              <span class="status-pill draft">Under Review</span>
-            </div>
-            <div style="font-size: 12px; color: #334155; line-height: 1.45;">
-              Your test has been completed by the lab and is currently being evaluated by Dr Anjali Menon. You will receive an instant notification when your doctor releases the summary.
-            </div>
+        ${unreleased.length > 0 ? `
+          <div style="margin-bottom: var(--space-6);">
+            <div style="font-size: 13px; font-weight: 700; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Under Review</div>
+            ${unreleased.map(u => `
+              <div class="action-item" data-clickable="true" style="margin-bottom: 12px;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 8px;">
+                  <div style="font-size: 15px; font-weight: 600; color: var(--cca-text-primary);">${u.title}</div>
+                  <div style="display:flex; align-items:center; gap:4px; font-size:11.5px; font-weight:700; color:var(--cca-orange); background:var(--cca-orange-light); padding:4px 8px; border-radius:12px;">
+                    Processing
+                  </div>
+                </div>
+                <div style="font-size: 13px; color: var(--cca-text-secondary); line-height: 1.5;">
+                  Your test is being evaluated by your care team. You will receive a notification when the summary is released.
+                </div>
+              </div>
+            `).join('')}
           </div>
-        `).join('')}
+        ` : ''}
 
         <!-- RELEASED RESULTS WITH DOCTOR INTERPRETATION -->
-        ${released.map(r => `
-          <div class="card glow-patient" style="border-left: 4px solid #10b981;">
-            <div class="card-header">
-              <div class="card-title" style="font-size: 13.5px;">${r.title}</div>
-              <span class="status-pill released">✓ Reviewed by Dr Anjali Menon</span>
-            </div>
-            <div style="font-size: 11px; color: #0369a1; margin-bottom: 6px;">
-              Released on ${r.releasedAt} · ${r.laboratory}
-            </div>
-            <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-left: 3px solid #0ea5e9; padding: 10px 12px; border-radius: 4px; font-size: 12px; color: #0369a1; line-height: 1.45; margin-bottom: 8px;">
-              <strong>What this means:</strong><br/>
-              ${r.patientExplanation}
-            </div>
-            ${r.category === 'Hematology' ? `
-              <div style="font-size: 11.5px; color: #334155; margin-bottom: 8px;">
-                ANC Level: <strong>${(r.metrics.find(m => m.name.includes('ANC')) || {}).value || '1.18'} k/µL (Safe Nadir Range)</strong> · Platelets: <strong>182 k/µL (Normal)</strong>
+        <div style="margin-bottom: var(--space-8);">
+          <div style="font-size: 13px; font-weight: 700; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Released Results</div>
+          ${released.map(r => `
+            <div class="action-item" style="margin-bottom: 12px;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 4px;">
+                <div style="font-size: 15.5px; font-weight: 600; color: var(--cca-text-primary);">${r.title}</div>
               </div>
-            ` : `
-              <div style="font-size: 11.5px; color: #334155; margin-bottom: 8px;">
-                ${r.metrics.slice(0, 2).map(m => `${m.name}: <strong>${m.value}</strong>`).join(' · ')}
+              <div style="font-size: 12px; color: var(--cca-text-secondary); margin-bottom: 12px;">
+                ${r.releasedAt} · ${r.laboratory}
               </div>
-            `}
-            <button class="btn-secondary btnAskAboutResult" id="btnAskAboutResult_${r.id}" data-res-title="${r.title}" data-clickable="true" style="width:100%; font-size:11.5px;">
-              Ask Care Team a Question About This Result
-            </button>
-          </div>
-        `).join('')}
+
+              <div style="background: var(--cca-surface-main); border: 1px solid var(--cca-border-subtle); padding: 12px; border-radius: var(--radius-md); font-size: 13.5px; color: var(--cca-text-primary); line-height: 1.5; margin-bottom: 16px;">
+                <strong style="color:var(--cca-text-primary);">Doctor's Note:</strong><br/>
+                ${r.patientExplanation}
+              </div>
+
+              ${r.category === 'Hematology' ? `
+                <div style="font-size: 13px; color: var(--cca-text-secondary); margin-bottom: 16px; display:flex; flex-direction:column; gap:6px;">
+                  <div>ANC Level: <strong style="color:var(--cca-text-primary);">${(r.metrics.find(m => m.name.includes('ANC')) || {}).value || '1.18'} k/µL</strong> <span style="color:var(--cca-green); font-size:11.5px; font-weight:600;">(Safe Nadir)</span></div>
+                  <div>Platelets: <strong style="color:var(--cca-text-primary);">182 k/µL</strong> <span style="color:var(--cca-green); font-size:11.5px; font-weight:600;">(Normal)</span></div>
+                </div>
+              ` : `
+                <div style="font-size: 13px; color: var(--cca-text-secondary); margin-bottom: 16px; display:flex; flex-direction:column; gap:6px;">
+                  ${r.metrics.slice(0, 2).map(m => `<div>${m.name}: <strong style="color:var(--cca-text-primary);">${m.value}</strong></div>`).join('')}
+                </div>
+              `}
+
+              <button class="btn-secondary btnAskAboutResult" id="btnAskAboutResult_${r.id}" data-res-title="${r.title}" data-clickable="true" style="width:100%; font-size:13.5px; height:44px;">
+                Ask Care Team a Question
+              </button>
+            </div>
+          `).join('')}
+        </div>
       `;
     } else if (screenName === 'Appointments') {
       // P04: Appointments
@@ -3055,39 +3156,95 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('')}
       `;
     } else if (screenName === 'Medicines') {
-      // P05: Medicines
+      // P09: Medicines
+      const todayMeds = state.medicines.filter(m => !m.schedule.includes('PRN'));
+      const prnMeds = state.medicines.filter(m => m.schedule.includes('PRN'));
+
       html = `
-        <div class="card-header" style="margin-bottom: 8px;">
-          <div class="card-title">My Supportive Medicines</div>
-          <span class="status-pill verified">Cycle 3 Nadir Cover</span>
+        <div style="margin-bottom: var(--space-6); padding-top: var(--space-2);">
+          <div style="font-size: 24px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 4px; letter-spacing: -0.5px;">Medicines</div>
+          <div style="font-size: 14px; color: var(--cca-text-secondary);">Cycle 3 Nadir Cover</div>
         </div>
 
-        ${state.medicines.map(m => `
-          <div class="card glow-patient" style="margin-bottom: 10px;">
-            <div class="card-header">
-              <div class="card-title" style="font-size: 13.5px;">${m.name}</div>
-              <span class="status-pill ${m.todayStatus === 'TAKEN' ? 'signed' : 'draft'}">${m.todayStatus}</span>
-            </div>
-            <div style="font-size: 12px; color: #0369a1; font-weight: 600; margin-bottom: 4px;">${m.purpose}</div>
-            <div style="font-size: 11.5px; color: #334155; margin-bottom: 8px;">
-              Dose: <strong>${m.dose}</strong> · Schedule: <strong>${m.schedule}</strong><br/>
-              Instructions: ${m.instructions}
-            </div>
-            <div style="display:flex; gap:6px;">
+        <div style="margin-bottom: var(--space-8);">
+          <div style="font-size: 13px; font-weight: 700; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Today's Schedule</div>
+          ${todayMeds.map(m => `
+            <div class="action-item" style="margin-bottom: 12px; opacity: ${m.todayStatus === 'TAKEN' ? '0.8' : '1'};">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 8px;">
+                <div>
+                  <div style="font-size: 15px; font-weight: 700; color: var(--cca-text-primary); text-decoration: ${m.todayStatus === 'TAKEN' ? 'line-through' : 'none'};">${m.name}</div>
+                  <div style="font-size: 12px; color: var(--cca-text-secondary); font-weight: 600;">${m.purpose}</div>
+                </div>
+                <span style="font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 12px; ${m.todayStatus === 'TAKEN' ? 'background: var(--cca-green-light); color: var(--cca-green);' : 'background: var(--cca-orange-light); color: var(--cca-orange);'}">${m.todayStatus}</span>
+              </div>
+              
+              <div style="font-size: 13px; color: var(--cca-text-primary); margin-bottom: 12px; line-height: 1.45;">
+                Dose: <strong style="color:var(--cca-text-primary);">${m.dose}</strong> · Schedule: <strong style="color:var(--cca-text-primary);">${m.schedule}</strong><br/>
+                <span style="color:var(--cca-text-secondary); font-size:12.5px; display:inline-block; margin-top:4px;">${m.instructions}</span>
+              </div>
+
               ${m.todayStatus !== 'TAKEN' ? `
-                <div style="flex:1; display:flex; align-items:center; gap:8px;">
-                  <input type="checkbox" class="action-check-box btnMarkTaken" data-med-id="${m.id}" data-clickable="true" style="width:22px; height:22px; cursor:pointer;" />
-                  <span style="font-size: 13px; font-weight: 600; color: #0f172a;">Mark Taken</span>
+                <div style="display:flex; align-items:center; gap:8px; margin-top:8px; background:var(--cca-surface-main); padding:12px; border-radius:var(--radius-md); border:1px solid var(--cca-border-subtle);">
+                  <input type="checkbox" class="action-check-box btnMarkTaken" data-med-id="${m.id}" data-clickable="true" style="width:20px; height:20px; cursor:pointer;" />
+                  <span style="font-size: 13.5px; font-weight: 600; color: var(--cca-text-primary);">Log as taken</span>
                 </div>
               ` : `
-                <div style="flex:1; font-size: 11.5px; color: #34d399; padding:7px;">✓ Taken today at 8:00 AM</div>
+                <div style="font-size: 12.5px; font-weight: 600; color: var(--cca-green); margin-top:8px;">✓ Logged today at 8:00 AM</div>
               `}
-              <button class="btn-secondary btnMissedDose" id="btnMissedDose_${m.id}" data-med-name="${m.name}" data-clickable="true" style="font-size:11px;">
-                Missed Dose Info
-              </button>
             </div>
+          `).join('')}
+        </div>
+
+        <div style="margin-bottom: var(--space-8);">
+          <div style="font-size: 13px; font-weight: 700; color: var(--cca-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">As Needed (PRN) / Current</div>
+          ${prnMeds.map(m => `
+            <div class="action-item" style="margin-bottom: 12px;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 8px;">
+                <div>
+                  <div style="font-size: 15px; font-weight: 700; color: var(--cca-text-primary);">${m.name}</div>
+                  <div style="font-size: 12px; color: var(--cca-text-secondary); font-weight: 600;">${m.purpose}</div>
+                </div>
+              </div>
+              
+              <div style="font-size: 13px; color: var(--cca-text-primary); margin-bottom: 12px; line-height: 1.45;">
+                Dose: <strong style="color:var(--cca-text-primary);">${m.dose}</strong> · Schedule: <strong style="color:var(--cca-text-primary);">${m.schedule}</strong><br/>
+                <span style="color:var(--cca-text-secondary); font-size:12.5px; display:inline-block; margin-top:4px;">${m.instructions}</span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    } else if (screenName === 'Records') {
+      // New Records Directory (Results + Documents)
+      html = `
+        <div style="margin-bottom: var(--space-6); padding-top: var(--space-2);">
+          <div style="font-size: 22px; font-weight: 700; color: var(--cca-text-primary); margin-bottom: 4px; letter-spacing: -0.4px;">Records</div>
+          <div style="font-size: 14px; color: var(--cca-text-secondary);">Your clinical history and reports</div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: var(--space-2); margin-bottom: var(--space-10);">
+          <div class="action-item" style="background:var(--cca-surface-card); border-radius:var(--radius-md); padding:16px; display:flex; gap:16px; align-items:center; cursor:pointer;" id="btnShortcutResults" data-clickable="true">
+            <div style="width:40px; height:40px; border-radius:50%; background:#f0f9ff; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9m-9 12H5a2 2 0 0 1-2-2v-4"/></svg>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:15px; font-weight:600; color:var(--cca-text-primary);">Results</div>
+              <div style="font-size:12.5px; color:var(--cca-text-secondary); margin-top:2px;">New & historical laboratory, imaging, and pathology results</div>
+            </div>
+            <span style="color:var(--cca-text-secondary);">→</span>
           </div>
-        `).join('')}
+
+          <div class="action-item" style="background:var(--cca-surface-card); border-radius:var(--radius-md); padding:16px; display:flex; gap:16px; align-items:center; cursor:pointer;" id="btnShortcutDocuments" data-clickable="true">
+            <div style="width:40px; height:40px; border-radius:50%; background:#f1f5f9; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:15px; font-weight:600; color:var(--cca-text-primary);">Documents</div>
+              <div style="font-size:12.5px; color:var(--cca-text-secondary); margin-top:2px;">Uploaded reports, prescriptions, visit documents and verified records</div>
+            </div>
+            <span style="color:var(--cca-text-secondary);">→</span>
+          </div>
+        </div>
       `;
     } else if (screenName === 'Documents') {
       // P10: Documents & Upload
@@ -3751,5 +3908,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Subscribe and initial render
   store.subscribe(render);
-  render(store.state);
+  
+  // If booting in splash mode, automatically transition to authLanding
+  if (!store.auth.isLoggedIn && store.auth.step === "splash") {
+    render(store.state);
+    setTimeout(() => {
+      if (!store.auth.isLoggedIn && store.auth.step === "splash") {
+        store.setAuthStep("authLanding");
+      }
+    }, 1500);
+  } else {
+    render(store.state);
+  }
 });

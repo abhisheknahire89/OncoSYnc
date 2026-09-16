@@ -445,9 +445,9 @@ class CCAEpisodeStore {
     
     // Auth & Launch Experience State
     this.auth = {
-      isLoggedIn: true,
-      role: "patient",
-      step: "authenticated", // 'splash' | 'authLanding' | 'doctorLogin' | 'doctorMfa' | 'doctorFacility' | 'patientLogin' | 'patientOtp' | 'patientLink' | 'patientConsent' | 'authenticated'
+      isLoggedIn: false,
+      role: null,
+      step: "splash", // 'splash' | 'authLanding' | 'doctorLogin' | 'doctorMfa' | 'doctorFacility' | 'patientLogin' | 'patientOtp' | 'patientLink' | 'patientConsent' | 'authenticated'
       actingAsCaregiverId: null, // genuine permission model
       selectedFacility: "CCA Cancer Centre — Hyderabad",
       availableFacilities: [

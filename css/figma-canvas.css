@@ -238,9 +238,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 32px;
   background: radial-gradient(circle at 45% 40%, #f1f5f9 0%, #e2e8f0 100%);
   background-size: cover;
-  padding: 20px;
+  padding: 32px;
 }
 
 /* Subtle background grid */
@@ -254,6 +255,7 @@ body {
   background-size: 32px 32px;
   pointer-events: none;
   opacity: 0.8;
+  z-index: 0;
 }
 
 /* Soft Spotlight Behind Phone */
@@ -265,9 +267,10 @@ body {
   border-radius: 50%;
   filter: blur(50px);
   pointer-events: none;
-  transform: translate(-50%, -50%);
   top: 50%;
   left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
 }
 
 /* Frame Scale Wrapper */
@@ -279,6 +282,8 @@ body {
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   transform-origin: center center;
   z-index: 10;
+  flex: 1;
+  min-width: 320px;
 }
 
 /* Hotspot Hint Overlay (Figma Blue Glow) */
@@ -328,11 +333,11 @@ body {
 
 /* Right-Side Presenter Panel */
 .presenter-panel {
-  position: absolute;
-  right: 18px;
-  top: 72px;
-  bottom: 18px;
+  position: static;
   width: 360px;
+  min-width: 360px;
+  max-width: 360px;
+  max-height: calc(100vh - 58px - 64px); /* 58px toolbar + 32px padding top/bottom */
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
@@ -341,15 +346,29 @@ body {
   box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
   display: flex;
   flex-direction: column;
-  z-index: 90;
+  z-index: 20;
   overflow: hidden;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+  transition: opacity 0.25s ease, margin 0.3s ease;
 }
 
 .presenter-panel.collapsed {
-  transform: translateX(380px);
-  opacity: 0;
-  pointer-events: none;
+  display: none;
+}
+
+/* Responsive Breakpoint for Presenter Panel */
+@media (max-width: 1100px) {
+  .prototype-stage {
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 24px;
+  }
+  
+  .presenter-panel {
+    width: min(100%, 420px);
+    min-width: 0;
+    max-width: 420px;
+    max-height: none;
+  }
 }
 
 .panel-header {
