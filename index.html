@@ -7,9 +7,9 @@
   <meta name="description" content="One cancer episode. One authoritative state. Two role-appropriate experiences. Interactive mobile demonstration prototype for CCA hospital stakeholders." />
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="css/figma-canvas.css" />
-  <link rel="stylesheet" href="css/iphone-frame.css" />
-  <link rel="stylesheet" href="css/app.css" />
+  <link rel="stylesheet" href="css/figma-canvas.css?v=20260917_v2" />
+  <link rel="stylesheet" href="css/iphone-frame.css?v=20260917_v2" />
+  <link rel="stylesheet" href="css/app.css?v=20260917_v2" />
 </head>
 <body>
 
@@ -372,10 +372,50 @@
               <div class="scenario-desc">Dr Menon signs note. Releases structured lay Visit Summary to patient.</div>
             </div>
 
+            <div class="scenario-card" data-scenario="video-consult" data-clickable="true">
+              <div class="scenario-title">
+                <span>12 Video consultation upcoming</span>
+                <span class="scenario-num">12</span>
+              </div>
+              <div class="scenario-desc">Patient opens upcoming video visit with Dr Menon and enters simulated call.</div>
+            </div>
+
+            <div class="scenario-card" data-scenario="pharmacy-refill" data-clickable="true">
+              <div class="scenario-title">
+                <span>13 Request medication refill</span>
+                <span class="scenario-num">13</span>
+              </div>
+              <div class="scenario-desc">Patient requests Ondansetron refill. Tracks pharmacy approval & delivery.</div>
+            </div>
+
+            <div class="scenario-card" data-scenario="home-healthcare" data-clickable="true">
+              <div class="scenario-title">
+                <span>14 Request home sample collection</span>
+                <span class="scenario-num">14</span>
+              </div>
+              <div class="scenario-desc">Patient requests at-home blood collection in Care at Home portal.</div>
+            </div>
+
+            <div class="scenario-card" data-scenario="caregiver-ops" data-clickable="true">
+              <div class="scenario-title">
+                <span>15 Caregiver coordinates care</span>
+                <span class="scenario-num">15</span>
+              </div>
+              <div class="scenario-desc">Switch to Caregiver Rajesh mode to view tasks and scoped care access.</div>
+            </div>
+
+            <div class="scenario-card" data-scenario="survivorship-preview" data-clickable="true">
+              <div class="scenario-title">
+                <span>16 Survivorship preview</span>
+                <span class="scenario-num">16</span>
+              </div>
+              <div class="scenario-desc">Preview transition from active treatment into Follow-up & Recovery mode.</div>
+            </div>
+
             <div class="scenario-card" data-scenario="reset-episode" data-clickable="true">
               <div class="scenario-title">
-                <span>11 Reset episode</span>
-                <span class="scenario-num" style="color:#f87171; background:rgba(239,68,68,0.15);">11</span>
+                <span>17 Reset episode</span>
+                <span class="scenario-num" style="color:#f87171; background:rgba(239,68,68,0.15);">17</span>
               </div>
               <div class="scenario-desc">Restores complete deterministic baseline state.</div>
             </div>
@@ -409,6 +449,12 @@
             <div class="quick-screens-chips">
               <span class="screen-chip" data-role="patient" data-screen="Home" data-clickable="true">Home</span>
               <span class="screen-chip" data-role="patient" data-screen="MyCare" data-clickable="true">My Care</span>
+              <span class="screen-chip" data-role="patient" data-screen="Appointments" data-clickable="true">Appointments</span>
+              <span class="screen-chip" data-role="patient" data-screen="VideoVisit" data-clickable="true">Video Consult</span>
+              <span class="screen-chip" data-role="patient" data-screen="Medicines" data-clickable="true">Medicines & Refills</span>
+              <span class="screen-chip" data-role="patient" data-screen="CareAtHome" data-clickable="true">Care at Home</span>
+              <span class="screen-chip" data-role="patient" data-screen="CaregiverAccess" data-clickable="true">Caregiver Access</span>
+              <span class="screen-chip" data-role="patient" data-screen="Survivorship" data-clickable="true">Survivorship</span>
               <span class="screen-chip" data-role="patient" data-screen="Messages" data-clickable="true">Messages</span>
               <span class="screen-chip" data-role="patient" data-screen="Records" data-clickable="true">Records</span>
               <span class="screen-chip" data-role="patient" data-screen="Profile" data-clickable="true">Profile</span>
@@ -439,7 +485,7 @@
   </div>
 
   <!-- JavaScript Scripts -->
-  <script src="js/state.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/state.js?v=20260917_v2"></script>
+  <script src="js/app.js?v=20260917_v2"></script>
 </body>
 </html>

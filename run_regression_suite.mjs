@@ -270,7 +270,7 @@ await evaluate('window.ccaEpisodeStore.navigateDoctor("Consultation")');
 await sleep(300);
 await evaluate('document.getElementById("btnSignConsultationModal").click()');
 await sleep(250);
-await evaluate('document.getElementById("btnExecuteSignConsult").click()');
+await evaluate('(document.getElementById("btnConfirmSignConsult") || document.getElementById("btnExecuteSignConsult")).click()');
 await sleep(350);
 
 const consultIsSigned = await evaluate('window.ccaEpisodeStore.consultationDraft.isSigned');

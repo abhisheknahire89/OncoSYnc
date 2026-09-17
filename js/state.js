@@ -147,7 +147,11 @@ function createInitialEpisodeState() {
         instructions: "Take with water 30 minutes before food.",
         todayStatus: "TAKEN", // TAKEN | PENDING | MISSED
         lastTakenAt: "Today 08:00 AM",
-        category: "Anti-emetic"
+        category: "Anti-emetic",
+        tabletsRemaining: 8,
+        refillDueInDays: 3,
+        refillStatus: "DUE", // NONE | DUE | REQUESTED | APPROVED | PREPARING | OUT_FOR_DELIVERY | DELIVERED
+        refillText: "Refill due in 3 days · 8 tablets remaining"
       },
       {
         id: "MED-02",
@@ -159,7 +163,11 @@ function createInitialEpisodeState() {
         instructions: "Take with food to minimize gastric irritation.",
         todayStatus: "PENDING",
         lastTakenAt: null,
-        category: "Steroid"
+        category: "Steroid",
+        tabletsRemaining: 14,
+        refillDueInDays: 7,
+        refillStatus: "NONE",
+        refillText: "14 tablets remaining"
       },
       {
         id: "MED-03",
@@ -171,14 +179,39 @@ function createInitialEpisodeState() {
         instructions: "Only take if nausea persists despite Ondansetron.",
         todayStatus: "PRN",
         lastTakenAt: null,
-        category: "Anti-emetic"
+        category: "Anti-emetic",
+        tabletsRemaining: 20,
+        refillDueInDays: 14,
+        refillStatus: "NONE",
+        refillText: "20 tablets remaining"
       }
     ],
 
     appointments: [
       {
+        id: "APT-VID-01",
+        title: "Video Consultation — Mid-Cycle Toxicity Check",
+        type: "VIDEO", // VIDEO | IN_PERSON
+        department: "Medical Oncology Telehealth",
+        date: "18 Sep 2026",
+        time: "04:30 PM",
+        facility: "CCA Telehealth Virtual Suite",
+        doctor: "Dr Anjali Menon",
+        specialty: "Medical Oncology",
+        preparation: "Check internet connection, keep recent reports ready, log questions.",
+        status: "SCHEDULED",
+        startsInText: "Starts in 2 hours",
+        checklist: [
+          { text: "Check internet connection", done: true },
+          { text: "Keep recent reports ready", done: true },
+          { text: "Add questions for your doctor", done: false },
+          { text: "Complete symptom check-in if due", done: true }
+        ]
+      },
+      {
         id: "APT-01",
         title: "Pre-Cycle 4 Blood Draw (CBC & CMP)",
+        type: "IN_PERSON",
         department: "CCA Outpatient Pathology Lab",
         date: "2026-08-28",
         time: "09:30 AM",
@@ -190,6 +223,7 @@ function createInitialEpisodeState() {
       {
         id: "APT-02",
         title: "Medical Oncology Review & Infusion #4",
+        type: "IN_PERSON",
         department: "Medical Oncology Day Suite",
         date: "2026-09-02",
         time: "10:15 AM",
@@ -199,6 +233,68 @@ function createInitialEpisodeState() {
         status: "SCHEDULED"
       }
     ],
+
+    homeHealthcare: {
+      activeRequestId: "HHC-01",
+      requests: [
+        {
+          id: "HHC-01",
+          serviceId: "BLOOD_COLLECTION",
+          serviceName: "Blood Sample Collection",
+          category: "Laboratory",
+          requestedDate: "2026-09-17",
+          timeWindow: "Morning (08:00 AM - 11:00 AM)",
+          address: "Flat 402, Green Glen Apartments, Jubilee Hills, Hyderabad",
+          status: "Confirmed", // Requested | Confirmed | Completed | Cancelled
+          assignedNurse: "Sujata Patel (Phlebotomist Nurse)",
+          notes: "Pre-cycle blood sample collection at home",
+          createdAt: "Yesterday 04:15 PM"
+        }
+      ],
+      services: [
+        { id: "BLOOD_COLLECTION", name: "Blood Sample Collection", category: "Laboratory", desc: "Phlebotomy collection at home coordinated with your CCA lab orders.", availability: "Available tomorrow", icon: "🩸" },
+        { id: "ONCO_NURSE", name: "Oncology Nurse Visit", category: "Nursing", desc: "In-home oncology nurse assessment, vital check & symptom support.", availability: "Available today", icon: "🩺" },
+        { id: "POST_TX_CHECK", name: "Post-Treatment Check", category: "Monitoring", desc: "Post-infusion recovery monitoring and hydration assessment.", availability: "Available in 24h", icon: "📋" },
+        { id: "WOUND_CARE", name: "Wound & Dressing Care", category: "Nursing", desc: "Surgical site dressing changes & sterile port care.", availability: "Available today", icon: "🩹" },
+        { id: "INJECTION_SUPPORT", name: "Injection & Supportive Therapy", category: "Treatment", desc: "Subcutaneous growth factor / anti-emetic administration.", availability: "Available today", icon: "💉" },
+        { id: "PALLIATIVE_SUPPORT", name: "Palliative & Supportive Care", category: "Support", desc: "Comprehensive symptom management, pain relief & comfort care.", availability: "Available on request", icon: "🤝" }
+      ]
+    },
+
+    survivorship: {
+      phase: "ACTIVE_TREATMENT", // ACTIVE_TREATMENT | SURVIVORSHIP
+      lastTreatmentDate: "12 Dec 2026",
+      nextFollowUpDate: "12 Mar 2027",
+      treatmentSummary: {
+        status: "COMPLETED",
+        completionDate: "12 Dec 2026",
+        diagnosis: "Stage IIA Invasive Ductal Carcinoma (Right Breast)",
+        modalitiesReceived: [
+          { name: "Right Lumpectomy + SLNB", date: "Jul 2026", result: "Clear margins (>5mm), 0/3 sentinel nodes" },
+          { name: "Dose-Dense AC-T Chemotherapy", date: "Jul - Nov 2026", result: "Completed 6 of 6 planned cycles" },
+          { name: "Whole Breast Radiotherapy", date: "Nov - Dec 2026", result: "Completed 40 Gy in 15 fractions" }
+        ],
+        currentPlan: "Endocrine Maintenance: Letrozole 2.5mg daily x 5 years.",
+        signedBy: "Dr Anjali Menon",
+        signedAt: "2026-12-15"
+      },
+      timeline: [
+        { title: "Treatment Completed", date: "12 Dec 2026", status: "COMPLETED", desc: "All planned systemic and radiation modalities finalized." },
+        { title: "First Follow-up Visit & Review", date: "12 Mar 2027", status: "CURRENT", doctor: "Dr Anjali Menon", desc: "Clinical exam, blood panel & endocrine tolerance check." },
+        { title: "Surveillance Mammogram & Ultrasound", date: "Jun 2027", status: "PLANNED", desc: "Baseline post-treatment bilateral breast imaging." },
+        { title: "Annual Oncology Review", date: "Dec 2027", status: "PLANNED", desc: "Comprehensive survivorship & bone density review." }
+      ],
+      lateEffectsToWatch: [
+        { effect: "Joint stiffness / arthralgia", advice: "Common with Letrozole. Moderate daily walking and adequate hydration help." },
+        { effect: "Fatigue & brain fog", advice: "Gradual energy return expected. Pace daily activities." },
+        { effect: "Bone density loss", advice: "DEXA scan scheduled at 1 year. Calcium + Vitamin D supplements recommended." }
+      ],
+      supportServices: [
+        { title: "Oncology Rehabilitation & Physiotherapy", desc: "Shoulder mobility & lymphedema prevention" },
+        { title: "Clinical Nutrition Support", desc: "Hormonal therapy weight & bone health management" },
+        { title: "Psycho-Oncology & Emotional Support", desc: "Survivorship wellness & anxiety support" }
+      ]
+    },
 
     results: [
       {
@@ -1356,6 +1452,181 @@ class CCAEpisodeStore {
       badge: decision === "CLEARED" ? "Cleared" : "Held",
       tone: decision === "CLEARED" ? "SUCCESS" : "URGENT"
     };
+    this.notify();
+  }
+
+  // --- NEW HCG CARE PATIENT SERVICE METHODS ---
+  requestRefill(medId, address = "Flat 402, Green Glen Apartments, Jubilee Hills, Hyderabad") {
+    const med = this.state.medicines.find(m => m.id === medId);
+    if (med) {
+      med.refillStatus = "REQUESTED";
+      med.refillText = "Refill requested · Awaiting confirmation";
+      
+      // Optionally add task for doctor if required
+      this.state.tasks.unshift({
+        id: "TSK-REF-" + Date.now(),
+        type: "REFILL_APPROVAL",
+        priority: "ROUTINE",
+        title: `Refill Request: ${med.name} (Ananya Sharma)`,
+        status: "OPEN",
+        patientId: this.state.patient.id,
+        patientName: this.state.patient.name,
+        assignedTo: "Pharmacy & Care Team",
+        dueAt: "Today"
+      });
+
+      this.state.dynamicIsland = {
+        expanded: true,
+        title: "Refill Requested",
+        subtitle: `${med.name} · Deliver to ${address}`,
+        badge: "Pharmacy Order",
+        tone: "NORMAL"
+      };
+
+      this.recordAuditEvent("REQUEST_REFILL", medId, `Patient requested refill for ${med.name}.`);
+      this.notify();
+    }
+  }
+
+  advanceRefillStatus(medId, nextStatus) {
+    const med = this.state.medicines.find(m => m.id === medId);
+    if (med) {
+      const order = ["REQUESTED", "APPROVED", "PREPARING", "OUT_FOR_DELIVERY", "DELIVERED"];
+      const currentIdx = order.indexOf(med.refillStatus);
+      const target = nextStatus || (currentIdx >= 0 && currentIdx < order.length - 1 ? order[currentIdx + 1] : "APPROVED");
+      med.refillStatus = target;
+
+      const labels = {
+        "APPROVED": "Refill approved by CCA Pharmacy",
+        "PREPARING": "Preparing medication in clean room",
+        "OUT_FOR_DELIVERY": "Out for home delivery via CCA Express",
+        "DELIVERED": "Delivered to saved address"
+      };
+      med.refillText = labels[target] || med.refillText;
+
+      this.state.dynamicIsland = {
+        expanded: true,
+        title: `Pharmacy Update: ${target}`,
+        subtitle: `${med.name} · ${labels[target] || target}`,
+        badge: "Fulfilment",
+        tone: target === "DELIVERED" ? "SUCCESS" : "NORMAL"
+      };
+
+      this.recordAuditEvent("UPDATE_REFILL_STATUS", medId, `Refill status for ${med.name} set to ${target}.`);
+      this.notify();
+    }
+  }
+
+  requestHomeCare({ serviceId, requestedDate, timeWindow, address, notes }) {
+    if (!this.state.homeHealthcare) {
+      this.state.homeHealthcare = { requests: [], services: [] };
+    }
+    const svc = this.state.homeHealthcare.services.find(s => s.id === serviceId) || { name: "Care at Home Service", category: "Support" };
+    const reqId = "HHC-" + Date.now();
+    const newReq = {
+      id: reqId,
+      serviceId,
+      serviceName: svc.name,
+      category: svc.category,
+      requestedDate: requestedDate || "Tomorrow",
+      timeWindow: timeWindow || "Morning (08:00 AM - 11:00 AM)",
+      address: address || "Flat 402, Green Glen Apartments, Jubilee Hills, Hyderabad",
+      status: "Requested", // Requested | Confirmed | Completed | Cancelled
+      assignedNurse: "Assigned upon confirmation",
+      notes: notes || "Requested via CCA Care at Home portal",
+      createdAt: "Just now"
+    };
+
+    this.state.homeHealthcare.requests.unshift(newReq);
+    this.state.homeHealthcare.activeRequestId = reqId;
+
+    this.state.dynamicIsland = {
+      expanded: true,
+      title: "Home Visit Requested",
+      subtitle: `${svc.name} · ${newReq.requestedDate} (${newReq.timeWindow})`,
+      badge: "CCA Care at Home",
+      tone: "NORMAL"
+    };
+
+    this.recordAuditEvent("REQUEST_HOME_CARE", reqId, `Patient requested ${svc.name} for ${newReq.requestedDate}.`);
+    this.notify();
+  }
+
+  cancelHomeCare(reqId) {
+    if (this.state.homeHealthcare && this.state.homeHealthcare.requests) {
+      const req = this.state.homeHealthcare.requests.find(r => r.id === reqId);
+      if (req) {
+        req.status = "Cancelled";
+        this.recordAuditEvent("CANCEL_HOME_CARE", reqId, `Patient cancelled home care request ${reqId}.`);
+        this.notify();
+      }
+    }
+  }
+
+  updateCaregiverScope(cgId, scope) {
+    if (this.state.patient.caregivers) {
+      const cg = this.state.patient.caregivers.find(c => c.id === cgId);
+      if (cg) {
+        cg.scope = scope;
+        const isLimited = scope.includes("View Only") || scope.includes("Limited");
+        cg.permissions = {
+          appointments: true,
+          treatmentInstructions: true,
+          medicines: true,
+          treatmentRoadmap: true,
+          documents: !isLimited,
+          results: !isLimited,
+          messages: !isLimited,
+          symptomSubmission: !isLimited,
+          financial: !isLimited
+        };
+        this.recordAuditEvent("UPDATE_CAREGIVER_SCOPE", cgId, `Updated scope for caregiver ${cg.name} to "${scope}".`);
+        this.notify();
+      }
+    }
+  }
+
+  setSurvivorshipPhase(phase) {
+    if (!this.state.survivorship) {
+      this.state.survivorship = { phase: "ACTIVE_TREATMENT" };
+    }
+    this.state.survivorship.phase = phase; // 'ACTIVE_TREATMENT' | 'SURVIVORSHIP'
+    if (phase === 'SURVIVORSHIP') {
+      this.state.dynamicIsland = {
+        expanded: true,
+        title: "Follow-up & Recovery Mode",
+        subtitle: "Active treatment completed · Transitioned to survivorship",
+        badge: "Survivorship",
+        tone: "SUCCESS"
+      };
+    }
+    this.recordAuditEvent("SET_SURVIVORSHIP_PHASE", phase, `Episode phase updated to ${phase}.`);
+    this.notify();
+  }
+
+  joinVideoConsultation(aptId) {
+    const apt = this.state.appointments.find(a => a.id === aptId) || this.state.appointments[0];
+    this.activeVideoConsultation = {
+      aptId: apt.id,
+      doctor: apt.doctor || "Dr Anjali Menon",
+      specialty: apt.specialty || "Medical Oncology",
+      status: "CONNECTING", // CONNECTING | IN_CALL | ENDED
+      muted: false,
+      cameraOff: false
+    };
+    this.recordAuditEvent("JOIN_VIDEO_CONSULTATION", apt.id, `Simulated Video Consultation started with ${apt.doctor}.`);
+    this.notify();
+  }
+
+  endVideoConsultation(aptId) {
+    if (this.activeVideoConsultation) {
+      this.activeVideoConsultation.status = "ENDED";
+    }
+    const apt = this.state.appointments.find(a => a.id === aptId);
+    if (apt) {
+      apt.status = "COMPLETED ✓";
+    }
+    this.recordAuditEvent("END_VIDEO_CONSULTATION", aptId || "APT-VID-01", "Video Consultation ended. Visit Summary queued.");
     this.notify();
   }
 

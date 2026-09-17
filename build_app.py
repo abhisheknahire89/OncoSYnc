@@ -14,6 +14,26 @@ content = r'''/**
 document.addEventListener('DOMContentLoaded', () => {
   const store = window.ccaEpisodeStore;
 
+  // Semantic Compression Projections for Mobile Worklists / Cards
+  function getCompressedDiagnosis(dx) {
+    if (!dx) return 'Oncology Care Episode';
+    const s = String(dx).toLowerCase();
+    if (s.includes('ductal carcinoma') || s.includes('breast')) return 'Breast IDC';
+    if (s.includes('colon')) return 'Colon Adenocarcinoma';
+    if (s.includes('lung') || s.includes('nsclc')) return 'NSCLC';
+    if (s.includes('prostate')) return 'Prostate Adenocarcinoma';
+    return dx.split(',')[0].substring(0, 24);
+  }
+
+  function getCompressedRegimen(regimen) {
+    if (!regimen) return 'Standard Protocol';
+    const s = String(regimen).toLowerCase();
+    if (s.includes('ac-t') || s.includes('doxorubicin')) return 'Dose-dense AC-T';
+    if (s.includes('capox')) return 'Adjuvant CAPOX';
+    if (s.includes('surveillance')) return 'Surveillance';
+    return regimen.split('(')[0].trim().substring(0, 22);
+  }
+
   // DOM Elements - Presentation Chrome
   const deviceWrapper = document.getElementById('deviceWrapper');
   const hotspotOverlay = document.getElementById('hotspotOverlay');
@@ -835,29 +855,29 @@ document.addEventListener('DOMContentLoaded', () => {
         ` : ''}
 
         <!-- ELEANOR VANCE ACTIVE EPISODE CARD -->
-        <div class="card glow-doctor" data-clickable="true" id="btnOpenEleanorSummary">
-          <div class="card-header">
-            <div>
-              <div class="card-title" style="font-size: 14.5px;">${state.patient.name}</div>
-              <div class="card-subtitle">MRN: ${state.patient.mrn} · ${state.patient.age}y ${state.patient.gender}</div>
+        <div class="action-item clinic-patient-row" data-clickable="true" id="btnOpenEleanorSummary" style="display:block; padding: 14px 16px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap: 12px;">
+            <div style="flex: 1; min-width: 0;">
+              <div style="display:flex; align-items:baseline; gap: 8px; flex-wrap:wrap; margin-bottom: 4px;">
+                <span style="font-size: 16px; font-weight: 700; color: var(--cca-text-primary);">${state.patient.name}</span>
+                <span style="font-size: 13px; color: var(--cca-text-secondary); font-weight:500;">${state.patient.age} ${state.patient.gender} · <span class="nowrap-text">${state.patient.mrn}</span></span>
+              </div>
+              <div style="display:flex; align-items:center; gap: 6px; font-size: 13px; color: var(--cca-text-primary); flex-wrap:wrap; margin-bottom: 4px;">
+                <span style="font-weight: 600; color: var(--cca-text-primary);">${getCompressedDiagnosis(state.cancerEpisode.diagnosis)}</span>
+                <span style="color: #94a3b8; font-size: 10px;">•</span>
+                <span style="font-weight: 600; color: var(--cca-accent-doctor);" class="nowrap-text">${state.staging.overallStage}</span>
+              </div>
+              <div style="display:flex; align-items:center; gap: 6px; font-size: 13px; color: var(--cca-text-secondary); flex-wrap:wrap;">
+                <span style="font-weight: 600; color: var(--cca-accent-doctor);">${getCompressedRegimen(state.cancerEpisode.activeRegimen)}</span>
+                <span style="color: #94a3b8; font-size: 10px;">•</span>
+                <span class="nowrap-text" style="color: var(--cca-text-primary); font-weight:500;">Cycle 3 Nadir Review</span>
+              </div>
             </div>
-            <span class="status-pill verified">Stage IIA IDC</span>
+            <div style="display:flex; flex-direction:column; align-items:flex-end; gap: 6px; flex-shrink: 0;">
+              <span style="font-size: 13px; font-weight: 600; color: var(--cca-text-secondary);" class="nowrap-text">10:30 AM</span>
+              <span style="font-size: 18px; color: #94a3b8; line-height: 1;">›</span>
+            </div>
           </div>
-
-          <div style="font-size: 12px; color: #334155; margin-bottom: 8px;">
-            <strong>Regimen:</strong> ${state.cancerEpisode.activeRegimen}<br/>
-            <strong>Current Phase:</strong> Cycle 3/6 · Day 8 Nadir Monitoring
-          </div>
-
-          <div style="display:flex; justify-content: space-between; font-size: 11.5px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 10px;">
-            <span>ANC: <strong style="color: #b45309;">1.18 k/µL</strong></span>
-            <span>Temp: <strong>${state.symptomReports[0] ? state.symptomReports[0].temperature : 98.6}°F</strong></span>
-            <span>Next: <strong>Friday Blood Test</strong></span>
-          </div>
-
-          <button class="btn-secondary" style="width: 100%; font-size: 12px;" data-clickable="true">
-            Open Cancer Episode Summary →
-          </button>
         </div>
 
         <!-- NEEDS REVIEW WORKLIST -->
